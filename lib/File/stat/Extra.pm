@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use warnings::register;
 
-# ABSTRACT: An extension of the File::stat module, provides additional methods
+# ABSTRACT: An extension of the File::stat module, provides additional methods.
 # VERSION
 
 =for test_synopsis
@@ -47,14 +47,14 @@ module.
 * Returns non-object result in list context.
 * You can now pass in bare file handles to C<stat> and C<lstat> under C<use strict>.
 * File tests C<-t> C<-T>, and C<-B> have been implemented too.
-* Convenience functions C<filetype>, C<permissions> for direct access to filetype and permission parts of the mode field/
+* Convenience functions C<filetype> and C<permissions> for direct access to filetype and permission parts of the mode field.
 * Named access to common file tests (C<isRegular> / C<isFile>, C<isDir>, C<isLink>, C<isBlock>, C<isChar>, C<isFIFO> / C<isPipe>, C<isSocket>).
-* Access to the name of the file (C<file>, C<abs_file> / C<target>).
+* Access to the name of the file / file handle used for the stat (C<file>, C<abs_file> / C<target>).
 
 =head1 SEE ALSO
 
 =for :list
-* L<File::stat> for the module this module extends.
+* L<File::stat> for the module for which C<File::stat::Extra> is the extension.
 * L<stat> and L<lstat> for the original C<stat> and C<lstat> functions.
 
 =head1 COMPATIBILITY
@@ -69,11 +69,13 @@ available. This may change in a future version of this module.
 
 =head1 WARNINGS
 
-When a file (handle) can not be (l)stat-ed, a warning C<Unable to stat: %s>. To disable this warning, specify
+When a file (handle) can not be (l)stat-ed, a warning C<Unable to
+stat: %s>. To disable this warning, specify
 
     no warnings "File::stat::Extra";
 
-The following warnings are inhereted from C<File::stat>, these can all be disabled with
+The following warnings are inhereted from C<File::stat>, these can all
+be disabled with
 
     no warnings "File::stat";
 
@@ -109,8 +111,7 @@ use Cwd ();
 use Fcntl ();
 
 require Carp;
-$Carp::Internal{+__PACKAGE__}++; # To get warnings reported at correct caller level
-
+$Carp::Internal{ (__PACKAGE__) }++; # To get warnings reported at correct caller level
 
 =func stat( I<FILEHANDLE> )
 
