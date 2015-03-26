@@ -61,8 +61,6 @@ sub main_tests {
     is_deeply \@stfh,   \@_stfh,   "List context should return same result as original stat for file handle$type";
     is_deeply \@st_fh,  \@_st_fh,  "List context should return same result as original stat for *file handle$type";
     is_deeply \@lst,    \@l_st,    "List context should return same result as original lstat for file$type";
-    is_deeply \@stfh,   \@st,      "List context should return same result for file handle as for file$type";
-    is_deeply \@st_fh,  \@st,      "List context should return same result for *file handle as for file$type";
 
     is_deeply [
         $st->dev, $st->ino, $st->mode, $st->nlink,
