@@ -2,5 +2,10 @@ Revision history for Perl module {{$dist->name}}
 
 {{$NEXT}}
 
+0.002     2015-03-26
+  * Symlink tests not run on systems that do not support them
+  * Added diagnostics output for failed tests
+  * Documentation cosmetics
+
 0.001     2015-03-25
   * Initial release

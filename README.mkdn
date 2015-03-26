@@ -1,10 +1,10 @@
 # NAME
 
-File::stat::Extra - An extension of the File::stat module, provides additional methods
+File::stat::Extra - An extension of the File::stat module, provides additional methods.
 
 # VERSION
 
-version 0.001
+version 0.002
 
 # SYNOPSIS
 
@@ -43,9 +43,9 @@ module.
 - Returns non-object result in list context.
 - You can now pass in bare file handles to `stat` and `lstat` under `use strict`.
 - File tests `-t` `-T`, and `-B` have been implemented too.
-- Convenience functions `filetype`, `permissions` for direct access to filetype and permission parts of the mode field/
+- Convenience functions `filetype` and `permissions` for direct access to filetype and permission parts of the mode field.
 - Named access to common file tests (`isRegular` / `isFile`, `isDir`, `isLink`, `isBlock`, `isChar`, `isFIFO` / `isPipe`, `isSocket`).
-- Access to the name of the file (`file`, `abs_file` / `target`).
+- Access to the name of the file / file handle used for the stat (`file`, `abs_file` / `target`).
 
 # FUNCTIONS
 
@@ -186,11 +186,13 @@ file.
 
 # WARNINGS
 
-When a file (handle) can not be (l)stat-ed, a warning `Unable to stat: %s`. To disable this warning, specify
+When a file (handle) can not be (l)stat-ed, a warning `Unable to
+stat: %s`. To disable this warning, specify
 
     no warnings "File::stat::Extra";
 
-The following warnings are inhereted from `File::stat`, these can all be disabled with
+The following warnings are inhereted from `File::stat`, these can all
+be disabled with
 
     no warnings "File::stat";
 
@@ -228,7 +230,7 @@ available. This may change in a future version of this module.
 
 # SEE ALSO
 
-- [File::stat](https://metacpan.org/pod/File::stat) for the module this module extends.
+- [File::stat](https://metacpan.org/pod/File::stat) for the module for which `File::stat::Extra` is the extension.
 - [stat](https://metacpan.org/pod/stat) and [lstat](https://metacpan.org/pod/lstat) for the original `stat` and `lstat` functions.
 
 # AUTHOR
