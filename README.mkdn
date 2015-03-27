@@ -4,7 +4,7 @@ File::stat::Extra - An extension of the File::stat module, provides additional m
 
 # VERSION
 
-version 0.003
+version 0.004
 
 # SYNOPSIS
 
@@ -169,6 +169,9 @@ You can use the file test operators on the `File::stat::Extra` object
 just as you would on a file (handle). However, instead of querying the
 file system, these operators will use the information from the
 object itself.
+
+The overloaded filetests are only supported from Perl version 5.12 and
+higer. The named access to these tests can still be used though.
 
 Note: in case of the special file tests `-t`, `-T`, and `-B`, the
 file (handle) _is_ tested the _first_ time the operator is

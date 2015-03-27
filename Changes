@@ -2,6 +2,9 @@ Revision history for Perl module {{$dist->name}}
 
 {{$NEXT}}
 
+0.004     2015-03-27
+  * Filetest overloading only supported in Perl 5.12 and higher
+
 0.003     2015-03-26
   * Removed faulty (and unnecessary) tests
 
