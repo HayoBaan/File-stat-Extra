@@ -5,7 +5,7 @@ NAME
 
 VERSION
 
-    version 0.003
+    version 0.004
 
 SYNOPSIS
 
@@ -181,6 +181,9 @@ METHODS
     just as you would on a file (handle). However, instead of querying the
     file system, these operators will use the information from the object
     itself.
+
+    The overloaded filetests are only supported from Perl version 5.12 and
+    higer. The named access to these tests can still be used though.
 
     Note: in case of the special file tests -t, -T, and -B, the file
     (handle) is tested the first time the operator is used. After the first
