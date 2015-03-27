@@ -225,11 +225,27 @@ effective (true) or real (false) ids.
 =cut
 
 BEGIN {
+    no strict 'refs'; ## no critic (TestingAndDebugging::ProhibitNoStrict)
+
     # Define the main field accessors and the cando method using the File::stat version
     for my $f (qw(dev ino mode nlink uid gid rdev size atime mtime ctime blksize blocks cando)) {
-        no strict 'refs'; ## no critic (TestingAndDebugging::ProhibitNoStrict)
         *{$f} = sub { $_[0][0]->$f; }
     }
+
+=for Pod::Coverage S_ISBLK S_ISCHR S_ISDIR S_ISFIFO S_ISLNK S_ISREG S_ISSOCK
+
+=cut
+
+    # Create own versions of these functions as they will croak on use
+    # if the platform doesn't define them. It's important to avoid
+    # inflicting that on the user.
+    # Note: to stay (more) version independent, we do not rely on the
+    # implementation in File::stat, but rather recreate here.
+    for (qw(BLK CHR DIR LNK REG SOCK)) {
+        *{"S_IS$_"} = defined eval { &{"Fcntl::S_IF$_"} } ? \&{"Fcntl::S_IS$_"} : sub { '' };
+    }
+    # FIFO flag and macro don't quite follow the S_IF/S_IS pattern above
+    *{'S_ISFIFO'} = defined &Fcntl::S_IFIFO ? \&Fcntl::S_ISFIFO : sub { '' };
 }
 
 =method file
@@ -290,8 +306,7 @@ Returns true if the file is a regular file (same as -f file test).
 =cut
 
 sub isFile {
-    # We make use of the File::stat version of the test to prevent unwanted croaks
-    return  File::stat::S_ISREG($_[0]->mode);
+    return S_ISREG($_[0]->mode);
 }
 
 *isRegular = *isFile;
@@ -303,8 +318,7 @@ Returns true if the file is a directory (same as -d file test).
 =cut
 
 sub isDir {
-    # We make use of the File::stat version of the test to prevent unwanted croaks
-    return  File::stat::S_ISDIR($_[0]->mode);
+    return S_ISDIR($_[0]->mode);
 }
 
 =method isLink
@@ -316,8 +330,7 @@ Note: Only relevant when C<lstat> was used!
 =cut
 
 sub isLink {
-    # We make use of the File::stat version of the test to prevent unwanted croaks
-    return  File::stat::S_ISLNK($_[0]->mode);
+    return S_ISLNK($_[0]->mode);
 }
 
 =method isBlock
@@ -327,8 +340,7 @@ Returns true if the file is a block special file (same as -b file test).
 =cut
 
 sub isBlock {
-    # We make use of the File::stat version of the test to prevent unwanted croaks
-    return  File::stat::S_ISBLK($_[0]->mode);
+    return S_ISBLK($_[0]->mode);
 }
 
 =method isChar
@@ -338,8 +350,7 @@ Returns true if the file is a character special file (same as -c file test).
 =cut
 
 sub isChar {
-    # We make use of the File::stat version of the test to prevent unwanted croaks
-    return  File::stat::S_ISCHR($_[0]->mode);
+    return S_ISCHR($_[0]->mode);
 }
 
 =method isFIFO
@@ -351,8 +362,7 @@ Returns true if the file is a FIFO file or, in case of a file handle, a pipe  (s
 =cut
 
 sub isFIFO {
-    # We make use of the File::stat version of the test to prevent unwanted croaks
-    return  File::stat::S_ISFIFO($_[0]->mode);
+    return S_ISFIFO($_[0]->mode);
 }
 
 *isPipe = *isFIFO;
@@ -364,8 +374,7 @@ Returns true if the file is a socket file (same as -S file test).
 =cut
 
 sub isSocket {
-    # We make use of the File::stat version of the test to prevent unwanted croaks
-    return  File::stat::S_ISSOCK($_[0]->mode);
+    return S_ISSOCK($_[0]->mode);
 }
 
 =method -X operator
