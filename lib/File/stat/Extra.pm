@@ -288,7 +288,8 @@ Returns true if the file is a regular file (same as -f file test).
 =cut
 
 sub isFile {
-    return -f $_[0];
+    # We make use of the File::stat version of the test to prevent unwanted croaks
+    return  File::stat::S_ISREG($_[0]->mode);
 }
 
 *isRegular = *isFile;
@@ -300,7 +301,8 @@ Returns true if the file is a directory (same as -d file test).
 =cut
 
 sub isDir {
-    return -d $_[0];
+    # We make use of the File::stat version of the test to prevent unwanted croaks
+    return  File::stat::S_ISDIR($_[0]->mode);
 }
 
 =method isLink
@@ -312,7 +314,8 @@ Note: Only relevant when C<lstat> was used!
 =cut
 
 sub isLink {
-    return -l $_[0];
+    # We make use of the File::stat version of the test to prevent unwanted croaks
+    return  File::stat::S_ISLNK($_[0]->mode);
 }
 
 =method isBlock
@@ -322,7 +325,8 @@ Returns true if the file is a block special file (same as -b file test).
 =cut
 
 sub isBlock {
-    return -b $_[0];
+    # We make use of the File::stat version of the test to prevent unwanted croaks
+    return  File::stat::S_ISBLK($_[0]->mode);
 }
 
 =method isChar
@@ -332,7 +336,8 @@ Returns true if the file is a character special file (same as -c file test).
 =cut
 
 sub isChar {
-    return -c $_[0];
+    # We make use of the File::stat version of the test to prevent unwanted croaks
+    return  File::stat::S_ISCHR($_[0]->mode);
 }
 
 =method isFIFO
@@ -344,7 +349,8 @@ Returns true if the file is a FIFO file or, in case of a file handle, a pipe  (s
 =cut
 
 sub isFIFO {
-    return -p $_[0];
+    # We make use of the File::stat version of the test to prevent unwanted croaks
+    return  File::stat::S_ISFIFO($_[0]->mode);
 }
 
 *isPipe = *isFIFO;
@@ -356,7 +362,8 @@ Returns true if the file is a socket file (same as -S file test).
 =cut
 
 sub isSocket {
-    return -S $_[0];
+    # We make use of the File::stat version of the test to prevent unwanted croaks
+    return  File::stat::S_ISSOCK($_[0]->mode);
 }
 
 =method -X operator
@@ -365,6 +372,9 @@ You can use the file test operators on the C<File::stat::Extra> object
 just as you would on a file (handle). However, instead of querying the
 file system, these operators will use the information from the
 object itself.
+
+The overloaded filetests are only supported from Perl version 5.12 and
+higer. The named access to these tests can still be used though.
 
 Note: in case of the special file tests C<-t>, C<-T>, and C<-B>, the
 file (handle) I<is> tested the I<first> time the operator is
@@ -383,7 +393,16 @@ file.
 =cut
 
 my %op = (
-    # Defer implementation of normal tests to File::stat
+    # Use the named version of these tests
+    f => sub { $_[0]->isRegular },
+    d => sub { $_[0]->isDir },
+    l => sub { $_[0]->isLink },
+    p => sub { $_[0]->isFIFO },
+    S => sub { $_[0]->isSocket },
+    b => sub { $_[0]->isBlock },
+    c => sub { $_[0]->isChar },
+
+    # Defer implementation of rest to File::stat
     r => sub { -r $_[0][0] },
     w => sub { -w $_[0][0] },
     x => sub { -x $_[0][0] },
@@ -397,14 +416,6 @@ my %op = (
     e => sub { -e $_[0][0] },
     z => sub { -z $_[0][0] },
     s => sub { -s $_[0][0] },
-
-    f => sub { -f $_[0][0] },
-    d => sub { -d $_[0][0] },
-    l => sub { -l $_[0][0] },
-    p => sub { -p $_[0][0] },
-    S => sub { -S $_[0][0] },
-    b => sub { -b $_[0][0] },
-    c => sub { -c $_[0][0] },
 
     u => sub { -u $_[0][0] },
     g => sub { -g $_[0][0] },
