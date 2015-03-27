@@ -2,6 +2,10 @@ Revision history for Perl module {{$dist->name}}
 
 {{$NEXT}}
 
+0.005     2015-03-27
+  * Creating own S_IS* functions to stay more version independent from File::stat
+  * Adaptations for compatibility with Perl v5.6
+
 0.004     2015-03-27
   * Filetest overloading only supported in Perl 5.12 and higher
 
