@@ -3,6 +3,8 @@ use strict;
 use warnings;
 use warnings::register;
 
+use v5.006;
+
 # ABSTRACT: An extension of the File::stat module, provides additional methods.
 # VERSION
 
@@ -426,9 +428,9 @@ my %op = (
     A => sub { -A $_[0][0] },
 
     # Implement these operators by testing the underlying file, caching the result
-    t => sub { $_[0][2] // -t $_[0]->file }, ## no critic (InputOutput::ProhibitInteractiveTest)
-    T => sub { $_[0][3] // -T $_[0]->file },
-    B => sub { $_[0][4] // -B $_[0]->file },
+    t => sub { defined $_[0][2] ? $_[0][2] : $_[0][2] = (-t $_[0]->file) || 0 }, ## no critic (InputOutput::ProhibitInteractiveTest)
+    T => sub { defined $_[0][3] ? $_[0][3] : $_[0][3] = (-T $_[0]->file) || 0 },
+    B => sub { defined $_[0][4] ? $_[0][4] : $_[0][4] = (-B $_[0]->file) || 0 },
 );
 
 use overload

@@ -3,6 +3,8 @@ use strict;
 use warnings;
 use Test::More 0.96;
 
+use v5.006;
+
 use File::stat::Extra;
 use Cwd;
 use File::Spec;
@@ -33,9 +35,9 @@ sub diagnose {
 
 sub main_tests {
     my $file = shift;
-    my $type = shift // "";
+    my $type = shift;
 
-    $type = " ($type)" if $type;
+    $type = $type ? " ($type)" : "";
 
     open FH, "<$file" or die "Unable to open $file$type";
 
@@ -110,10 +112,18 @@ subtest 'Filetests on a file and directory' => sub {
     ok(!$st->isChar,   'testfile is not a char (object)') or diagnose($st);
 
   SKIP: {
-        skip 'filetests not overloadable on Perl < v5.12.0', 2 if $^V < v5.12.0;
+        skip 'filetests not overloadable on Perl < v5.12.0', 8 if $^V < 5.012;
 
-        ok(-f $st,         'testfile is a regular file (object filetest)') or diagnose($st);
-        ok(-d $std,        'corpus is a directory (object filetest)') or diagnose($std);
+        ok(-d $std,          'corpus is a directory (object filetest)') or diagnose($std);
+
+        ok(-f $st,           'testfile is a regular file (object filetest)') or diagnose($st);
+        ok(!-t $st,          'testfile is not connected to a tty (object filetest)') or diagnose($st);
+        ok(-T $st,           'testfile is a text file (object filetest)') or diagnose($st);
+        ok(-B $st,           'testfile is a binary file (object filetest)') or diagnose($st);
+
+        ok(defined $st->[2], '-t is cached') or diagnose($st);
+        ok(defined $st->[3], '-T is cached') or diagnose($st);
+        ok(defined $st->[4], '-B is cached') or diagnose($st);
     }
 
   SKIP: {
@@ -127,7 +137,7 @@ subtest 'Filetests on a file and directory' => sub {
         ok($lstl->isLink, 'testlink is a link (lstat, object)') or diagnose($lstl);
 
       SKIP: {
-            skip 'filetests not overloadable on Perl < v5.12.0', 1 if $^V < v5.12.0;
+            skip 'filetests not overloadable on Perl < v5.12.0', 1 if $^V < 5.012;
 
             ok(-l $lstl,      'testlink is a link (lstat, object filetest)') or diagnose($lstl);
         }
