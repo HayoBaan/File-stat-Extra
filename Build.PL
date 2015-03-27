@@ -13,14 +13,14 @@ my %module_build_args = (
   "configure_requires" => {
     "ExtUtils::MakeMaker" => 0,
     "Module::Build" => "0.28",
-    "perl" => "5.010"
+    "perl" => "v5.6.0"
   },
   "dist_abstract" => "An extension of the File::stat module, provides additional methods.",
   "dist_author" => [
     "Hayo Baan <info\@hayobaan.nl>"
   ],
   "dist_name" => "File-stat-Extra",
-  "dist_version" => "0.004",
+  "dist_version" => "0.005",
   "license" => "perl",
   "module_name" => "File::stat::Extra",
   "recommends" => {},
@@ -33,7 +33,7 @@ my %module_build_args = (
     "File::stat" => 0,
     "Symbol" => 0,
     "overload" => 0,
-    "perl" => "5.010",
+    "perl" => "5.006",
     "strict" => 0,
     "warnings" => 0,
     "warnings::register" => 0
@@ -44,7 +44,7 @@ my %module_build_args = (
     "IO::Handle" => 0,
     "IPC::Open3" => 0,
     "Test::More" => "0.96",
-    "perl" => "5.010"
+    "perl" => "5.006"
   }
 );
 
@@ -55,7 +55,7 @@ my %fallback_build_requires = (
   "IPC::Open3" => 0,
   "Module::Build" => "0.28",
   "Test::More" => "0.96",
-  "perl" => "5.010"
+  "perl" => "5.006"
 );
 
 
