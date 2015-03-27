@@ -35,8 +35,6 @@ sub main_tests {
     my $file = shift;
     my $type = shift // "";
 
-    plan skip_all => "Skipped: $type not supported by OS" if !$file;
-
     $type = " ($type)" if $type;
 
     open FH, "<$file" or die "Unable to open $file$type";
@@ -87,39 +85,71 @@ plan tests => 4;
 
 subtest "Main tests on a file" => sub { main_tests($testfile); };
 
-subtest "Additional tests on a file and directory" => sub {
+SKIP: {
+    skip 'symlinks not supported by OS', 1 if !$testlink;
+
+    subtest 'Main tests on a link' => sub { main_tests($testlink, 'symlink'); };
+}
+
+subtest 'Filetests on a file and directory' => sub {
     my $st  = stat($testfile);
+    my $lst = lstat($testfile);
     my $std = stat('corpus');
 
     ok(-f $testfile,   'testfile is a regular file (normal filetest)');
     ok($st->isRegular, 'testfile is a regular file (object)') or diagnose($st);
-    ok(-f $st,         'testfile is a regular file (object filetest)') or diagnose($st);
-    ok(-d "corpus",    'corpus is a directory (normal filetest)');
-    ok($std->isDir,    'corpus is a directory') or diagnose($std);
-    ok(-d $std,        'corpus is a directory (object filetest)') or diagnose($std);
+    ok(!$st->isLink,   'testfile is not a link (stat, object)') or diagnose($st);
+    ok(!$lst->isLink,  'testfile is not a link (lstat, object)') or diagnose($lst);
+
+    ok(-d 'corpus',    'corpus is a directory (normal filetest)');
+    ok($std->isDir,    'corpus is a directory (object)') or diagnose($std);
+
+    ok(!$st->isPipe,   'testfile is not a pipe (object)') or diagnose($st);
+    ok(!$st->isSocket, 'testfile is not a socket (object)') or diagnose($st);
+    ok(!$st->isBlock,  'testfile is not a block (object)') or diagnose($st);
+    ok(!$st->isChar,   'testfile is not a char (object)') or diagnose($st);
+
+  SKIP: {
+        skip 'filetests not overloadable on Perl < v5.12.0', 2 if $^V < v5.12.0;
+
+        ok(-f $st,         'testfile is a regular file (object filetest)') or diagnose($st);
+        ok(-d $std,        'corpus is a directory (object filetest)') or diagnose($std);
+    }
+
+  SKIP: {
+        skip 'symlinks not supported by OS', 4 if !$testlink;
+
+        my $stl = stat($testlink);
+        my $lstl = lstat($testlink);
+
+        ok(-l $testlink,  'testlink is a link (normal filetest)');
+        ok(!$stl->isLink, 'testlink is not a link (stat, object)') or diagnose($stl);
+        ok($lstl->isLink, 'testlink is a link (lstat, object)') or diagnose($lstl);
+
+      SKIP: {
+            skip 'filetests not overloadable on Perl < v5.12.0', 1 if $^V < v5.12.0;
+
+            ok(-l $lstl,      'testlink is a link (lstat, object filetest)') or diagnose($lstl);
+        }
+    }
 };
 
-subtest "Main tests on a link" => sub { main_tests($testlink, "symlink"); };
-
-subtest "More link tetsts" => sub {
-    plan skip_all => "Skipped: symlink not supported by OS" if !$testlink;
-
+subtest 'File / link equality tests' => sub {
     my $st  = stat($testfile);
     my $lst = lstat($testfile);
 
-    my $stl = stat($testlink);
-    my $lstl = lstat($testlink);
+    ok($st == $lst,  'testfile represent the same file (stat vs lstat, numeric)');
+    ok($st eq $lst,  'testfile represent the same file (stat vs lstat, string)');
 
-    ok(!$st->isLink,  'testfile is not a link (stat)') or diagnose($st);
-    ok(!$stl->isLink, 'testlink is not a link (stat)') or diagnose($stl);
-    ok(!$lst->isLink, 'testfile is not a link for an lstat on file(lstat)') or diagnose($lst);
-    ok(-l $testlink,  'testlink is a link (filetest)') or diagnose($lstl);
-    ok($lstl->isLink, 'testlink is a link (lstat)') or diagnose($lstl);
-    ok(-l $lstl,      'testlink is a link (lstat, object filetest)') or diagnose($lstl);
+  SKIP: {
+        skip 'symlinks not supported by OS', 4 if !$testlink;
 
-    ok($st == $stl,  'testfile and resolved testlink represent the same file (numeric test)');
-    ok($st eq $stl,  'testfile and resolved testlink represent the same file (string test)');
-    ok($st != $lstl, 'testfile and unresolved testlink do not represent the same file (numeric test)');
-    ok($st ne $lstl, 'testfile and unresolved testlink do not represent the same file (string test)');
+        my $stl = stat($testlink);
+        my $lstl = lstat($testlink);
+
+        ok($st == $stl,  'testfile and resolved testlink represent the same file (numeric)');
+        ok($st eq $stl,  'testfile and resolved testlink represent the same file (string)');
+        ok($st != $lstl, 'testfile and unresolved testlink do not represent the same file (numeric)');
+        ok($st ne $lstl, 'testfile and unresolved testlink do not represent the same file (string)');
+    }
 };
-
