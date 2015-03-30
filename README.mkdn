@@ -4,7 +4,7 @@ File::stat::Extra - An extension of the File::stat module, provides additional m
 
 # VERSION
 
-version 0.005
+version 0.006
 
 # SYNOPSIS
 
@@ -177,15 +177,37 @@ Note: in case of the special file tests `-t`, `-T`, and `-B`, the
 file (handle) _is_ tested the _first_ time the operator is
 used. After the first time, the initial result is re-used.
 
-## Unary "" (stringification) and other operators
+## Unary `""` (stringification)
 
-The unary "" operator is overloaded to return the the device and inode
-numbers separated by a `.` (`_dev_._ino_`). This yields a uniqe file identifier.
+The unary `""` (stringification) operator is overloaded to return the the device and inode
+numbers separated by a `.` (`_dev_._ino_`). This yields a uniqe file identifier (as string).
 
-All other operators are automagically generated based on this
-representation, meaning you can easily compare two
-`File::stat::Extra` objects to see if they are the same (hardlinked)
-file.
+## Comparison operators `<=>`, `cmp`, and `~~`
+
+The comparison operators use the string representation of the
+`File::stat::Extra` object. So, to see if two `File::stat::Extra`
+object point to the same (hardlinked) file, you can simply say
+something like this:
+
+    print 'Same file' if $ob1 == $ob2;
+
+For objects created from an `stat` of a symbolic link, the actual
+_destination_ of the link is used in the comparison! If you want to
+compare the actual symnlink file, use `lstat` instead.
+
+Note: All comparisons (also the numeric versions) are performed on the
+full stringified versions of the object. This to prevent files on the
+same device, but with an inode number ending in a zero to compare
+equally while they aren't (e.g., 5.10 and 5.100 compare equal
+numerically but denote a different file).
+
+Note: the smartmatch `~~` operator is obly overloaded on Perl version
+5.10 and above.
+
+## Other operators
+
+As the other operators (`+`, `-`, `*`, etc.) are meaningless, they
+have not been overloaded and will cause a run-time error.
 
 # WARNINGS
 

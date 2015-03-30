@@ -13,14 +13,14 @@ my %module_build_args = (
   "configure_requires" => {
     "ExtUtils::MakeMaker" => 0,
     "Module::Build" => "0.28",
-    "perl" => "v5.6.0"
+    "perl" => "5.006"
   },
   "dist_abstract" => "An extension of the File::stat module, provides additional methods.",
   "dist_author" => [
     "Hayo Baan <info\@hayobaan.nl>"
   ],
   "dist_name" => "File-stat-Extra",
-  "dist_version" => "0.005",
+  "dist_version" => "0.006",
   "license" => "perl",
   "module_name" => "File::stat::Extra",
   "recommends" => {},
