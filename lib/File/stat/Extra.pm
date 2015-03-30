@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use warnings::register;
 
-use v5.006;
+use 5.006;
 
 # ABSTRACT: An extension of the File::stat module, provides additional methods.
 # VERSION
@@ -391,15 +391,37 @@ Note: in case of the special file tests C<-t>, C<-T>, and C<-B>, the
 file (handle) I<is> tested the I<first> time the operator is
 used. After the first time, the initial result is re-used.
 
-=method Unary "" (stringification) and other operators
+=method Unary C<""> (stringification)
 
-The unary "" operator is overloaded to return the the device and inode
-numbers separated by a C<.> (C<I<dev>.I<ino>>). This yields a uniqe file identifier.
+The unary C<""> (stringification) operator is overloaded to return the the device and inode
+numbers separated by a C<.> (C<I<dev>.I<ino>>). This yields a uniqe file identifier (as string).
 
-All other operators are automagically generated based on this
-representation, meaning you can easily compare two
-C<File::stat::Extra> objects to see if they are the same (hardlinked)
-file.
+=method Comparison operators C<< <=> >>, C<cmp>, and C<~~>
+
+The comparison operators use the string representation of the
+C<File::stat::Extra> object. So, to see if two C<File::stat::Extra>
+object point to the same (hardlinked) file, you can simply say
+something like this:
+
+    print 'Same file' if $ob1 == $ob2;
+
+For objects created from an C<stat> of a symbolic link, the actual
+I<destination> of the link is used in the comparison! If you want to
+compare the actual symnlink file, use C<lstat> instead.
+
+Note: All comparisons (also the numeric versions) are performed on the
+full stringified versions of the object. This to prevent files on the
+same device, but with an inode number ending in a zero to compare
+equally while they aren't (e.g., 5.10 and 5.100 compare equal
+numerically but denote a different file).
+
+Note: the smartmatch C<~~> operator is obly overloaded on Perl version
+5.10 and above.
+
+=method Other operators
+
+As the other operators (C<+>, C<->, C<*>, etc.) are meaningless, they
+have not been overloaded and will cause a run-time error.
 
 =cut
 
@@ -442,24 +464,43 @@ my %op = (
     B => sub { defined $_[0][4] ? $_[0][4] : $_[0][4] = (-B $_[0]->file) || 0 },
 );
 
-use overload
-    fallback => 1,
+sub _filetest {
+    my ($s, $op) = @_;
+    if ($op{$op}) {
+        return $op{$op}->($s);
+    } else {
+        # We should have everything covered so this is just a safegauard
+        Carp::croak "-$op is not implemented on a File::stat::Extra object";
+    }
+}
 
-    # File test operators
-    -X => sub {
-        my ($s, $op) = @_;
-        if ($op{$op}) {
-            return $op{$op}->($s);
-        } else {
-             # We should have everything covered so this is just a safegauard
-            Carp::croak "-$op is not implemented on a File::stat::Extra object";
-        }
-    },
+sub _dev_ino {
+    return $_[0]->dev . "." . $_[0]->ino;
+}
+
+sub _compare {
+    my $va = shift;
+    my $vb = shift;
+    my $swapped = shift;
+    ($vb, $va) = ($va, $vb) if $swapped;
+
+    return "$va" cmp "$vb"; # Force stringification when comparing
+}
+
+use overload
+    # File test operators (as of Perl v5.12)
+    $^V >= 5.012 ? (-X => \&_filetest) : (),
 
     # Unary "" returns the object as "dev.ino", this should be a
-    # unique number so one can test file equality easily (hard links
-    # are equal)
-    '""' => sub { $_[0]->dev . "." . $_[0]->ino },
+    # unique string for each file.
+    '""' => \&_dev_ino,
+
+    # Comparison is done based on the unique string created with the stringification
+    '<=>' => \&_compare,
+    'cmp' => \&_compare,
+
+    # Smartmatch as of Perl v5.10
+    $^V >= 5.010 ? ('~~' => \&_compare) : (),
 
     ;
 

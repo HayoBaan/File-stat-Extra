@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use Test::More 0.96;
 
-use v5.006;
+use 5.006;
 
 use File::stat::Extra;
 use Cwd;
@@ -24,13 +24,20 @@ END {
 }
 
 sub diagnose {
-    my $st = shift;
+    my $txt = "";
 
-    my $txt = sprintf "File=%s, dev=%d, ino=%d,\nmode=%06o (type=%06o, perms=%06o),\nnlink=%d, uid=%s, gid=%s, rdev=%s, size=%d,\natime=%s, mtime=%s, ctime=%s,\nblksize=%d, blocks=%d\n", $st->file, $st->dev, $st->ino, $st->mode, $st->filetype, $st->permissions, $st->nlink,
-        $st->uid, $st->gid, $st->rdev, $st->size,
-        scalar localtime($st->atime), scalar localtime($st->mtime), scalar localtime($st->ctime),
-        $st->blksize, $st->blocks;
-    return diag ($txt, explain $st);
+    for my $st (@_) {
+        if (ref $st) {
+            $txt .= sprintf("File=%s, dev=%d, ino=%d,\nmode=%06o (type=%06o, perms=%06o),\nnlink=%d, uid=%s, gid=%s, rdev=%s, size=%d,\natime=%s, mtime=%s, ctime=%s,\nblksize=%d, blocks=%d\n", $st->file, $st->dev, $st->ino, $st->mode, $st->filetype, $st->permissions, $st->nlink,
+                $st->uid, $st->gid, $st->rdev, $st->size,
+                scalar localtime($st->atime), scalar localtime($st->mtime), scalar localtime($st->ctime),
+                $st->blksize, $st->blocks);
+            $txt .= 'Object=' . join('', explain($st));
+        } else {
+            $txt .= $st;
+        }
+    }
+    return diag($txt);
 }
 
 sub main_tests {
@@ -148,8 +155,8 @@ subtest 'File / link equality tests' => sub {
     my $st  = stat($testfile);
     my $lst = lstat($testfile);
 
-    ok($st == $lst,  'testfile represent the same file (stat vs lstat, numeric)');
-    ok($st eq $lst,  'testfile represent the same file (stat vs lstat, string)');
+    ok($st == $lst,  'testfile represents the same file (stat vs lstat, numeric)') or diagnose("stat=$st, lstat=$lst\n", $st, $lst);
+    ok($st eq $lst,  'testfile represents the same file (stat vs lstat, string)')  or diagnose("stat=$st, lstat=$lst\n", $st, $lst);
 
   SKIP: {
         skip 'symlinks not supported by OS', 4 if !$testlink;
@@ -157,9 +164,13 @@ subtest 'File / link equality tests' => sub {
         my $stl = stat($testlink);
         my $lstl = lstat($testlink);
 
-        ok($st == $stl,  'testfile and resolved testlink represent the same file (numeric)');
-        ok($st eq $stl,  'testfile and resolved testlink represent the same file (string)');
-        ok($st != $lstl, 'testfile and unresolved testlink do not represent the same file (numeric)');
-        ok($st ne $lstl, 'testfile and unresolved testlink do not represent the same file (string)');
+        ok($st == $stl,  'testfile and resolved testlink represent the same file (numeric)')
+            or diagnose("testfile(stat)=$st, testlinkg(stat)=$stl\n", $st, $stl);
+        ok($st eq $stl,  'testfile and resolved testlink represent the same file (string)')
+            or diagnose("testfile(stat)=$st, testlinkg(stat)=$stl\n", $st, $stl);
+        ok($st != $lstl, 'testfile and unresolved testlink do not represent the same file (numeric)')
+            or diagnose("testfile(stat)=$st, testlinkg(lstat)=$lstl\n", $st, $lstl);
+        ok($st ne $lstl, 'testfile and unresolved testlink do not represent the same file (string)')
+            or diagnose("testfile(stat)=$st, testlinkg(lstat)=$lstl\n", $st, $lstl);
     }
 };
