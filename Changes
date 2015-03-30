@@ -2,6 +2,12 @@ Revision history for Perl module {{$dist->name}}
 
 {{$NEXT}}
 
+0.006     2015-03-30
+  * Explicitly overloading comparison operators to prevent problems on some systems
+  * Not overloading operators that aren't supported by active Perl version
+    (e.g., filetests < v5.12 and the smartmatch operator < v5.10) 
+  * Not (implicitly) overloading operators (e.g., +, -, * etc.) that have no meaning
+
 0.005     2015-03-27
   * Creating own S_IS* functions to stay more version independent from File::stat
   * Adaptations for compatibility with Perl v5.6
