@@ -219,7 +219,7 @@ Interprets the C<mode>, C<uid> and C<gid> fields, and returns whether
 or not the current process would be allowed the specified access.
 
 I<ACCESS> is one of C<S_IRUSR>, C<S_IWUSR> or C<S_IXUSR> from the
-L<Fcntl|Fcntl> module, and I<EFFECTIVE> indicates whether to use
+L<Fcntl> module, and I<EFFECTIVE> indicates whether to use
 effective (true) or real (false) ids.
 
 =cut
@@ -389,9 +389,10 @@ higer. The named access to these tests can still be used though.
 
 Note: in case of the special file tests C<-t>, C<-T>, and C<-B>, the
 file (handle) I<is> tested the I<first> time the operator is
-used. After the first time, the initial result is re-used.
+used. After the first time, the initial result is re-used and no
+further testing of the file (handle) is performed.
 
-=method Unary C<""> (stringification)
+=method Unary C<""> (stringification) operator
 
 The unary C<""> (stringification) operator is overloaded to return the the device and inode
 numbers separated by a C<.> (C<I<dev>.I<ino>>). This yields a uniqe file identifier (as string).
@@ -403,11 +404,11 @@ C<File::stat::Extra> object. So, to see if two C<File::stat::Extra>
 object point to the same (hardlinked) file, you can simply say
 something like this:
 
-    print 'Same file' if $ob1 == $ob2;
+    print 'Same file' if $obj1 == $obj2;
 
 For objects created from an C<stat> of a symbolic link, the actual
 I<destination> of the link is used in the comparison! If you want to
-compare the actual symnlink file, use C<lstat> instead.
+compare the actual symlink file, use C<lstat> instead.
 
 Note: All comparisons (also the numeric versions) are performed on the
 full stringified versions of the object. This to prevent files on the
@@ -415,7 +416,7 @@ same device, but with an inode number ending in a zero to compare
 equally while they aren't (e.g., 5.10 and 5.100 compare equal
 numerically but denote a different file).
 
-Note: the smartmatch C<~~> operator is obly overloaded on Perl version
+Note: the smartmatch C<~~> operator is only overloaded on Perl version
 5.10 and above.
 
 =method Other operators
