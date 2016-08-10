@@ -2,6 +2,12 @@ Revision history for Perl module {{$dist->name}}
 
 {{$NEXT}}
 
+0.007     2016-08-10
+  * Amendments for Test::Synopsis > v0.13
+  * Removed Build.PL, require >= v0.009 of PluginBundle
+  * Updated author e-mail address
+  * Documentation and test cosmetics
+
 0.006     2015-03-30
   * Explicitly overloading comparison operators to prevent problems on some systems
   * Not overloading operators that aren't supported by active Perl version
