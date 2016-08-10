@@ -4,30 +4,9 @@ File::stat::Extra - An extension of the File::stat module, provides additional m
 
 # VERSION
 
-version 0.006
+version 0.007
 
 # SYNOPSIS
-
-    use File::stat::Extra;
-
-    $st = lstat($file) or die "No $file: $!";
-
-    if ($st->isLink) {
-        print "$file is a symbolic link";
-    }
-
-    if (-x $st) {
-        print "$file is executable";
-    }
-
-    use Fcntl 'S_IRUSR';
-    if ( $st->cando(S_IRUSR, 1) ) {
-        print "My effective uid can read $file";
-    }
-
-    if ($st == stat($file)) {
-        printf "%s and $file are the same", $st->file;
-    }
 
 # DESCRIPTION
 
@@ -175,9 +154,10 @@ higer. The named access to these tests can still be used though.
 
 Note: in case of the special file tests `-t`, `-T`, and `-B`, the
 file (handle) _is_ tested the _first_ time the operator is
-used. After the first time, the initial result is re-used.
+used. After the first time, the initial result is re-used and no
+further testing of the file (handle) is performed.
 
-## Unary `""` (stringification)
+## Unary `""` (stringification) operator
 
 The unary `""` (stringification) operator is overloaded to return the the device and inode
 numbers separated by a `.` (`_dev_._ino_`). This yields a uniqe file identifier (as string).
@@ -189,11 +169,11 @@ The comparison operators use the string representation of the
 object point to the same (hardlinked) file, you can simply say
 something like this:
 
-    print 'Same file' if $ob1 == $ob2;
+    print 'Same file' if $obj1 == $obj2;
 
 For objects created from an `stat` of a symbolic link, the actual
 _destination_ of the link is used in the comparison! If you want to
-compare the actual symnlink file, use `lstat` instead.
+compare the actual symlink file, use `lstat` instead.
 
 Note: All comparisons (also the numeric versions) are performed on the
 full stringified versions of the object. This to prevent files on the
@@ -201,13 +181,34 @@ same device, but with an inode number ending in a zero to compare
 equally while they aren't (e.g., 5.10 and 5.100 compare equal
 numerically but denote a different file).
 
-Note: the smartmatch `~~` operator is obly overloaded on Perl version
+Note: the smartmatch `~~` operator is only overloaded on Perl version
 5.10 and above.
 
 ## Other operators
 
 As the other operators (`+`, `-`, `*`, etc.) are meaningless, they
 have not been overloaded and will cause a run-time error.
+
+    use File::stat::Extra;
+
+    $st = lstat($file) or die "No $file: $!";
+
+    if ($st->isLink) {
+        print "$file is a symbolic link";
+    }
+
+    if (-x $st) {
+        print "$file is executable";
+    }
+
+    use Fcntl 'S_IRUSR';
+    if ( $st->cando(S_IRUSR, 1) ) {
+        print "My effective uid can read $file";
+    }
+
+    if ($st == stat($file)) {
+        printf "%s and $file are the same", $st->file;
+    }
 
 # WARNINGS
 
@@ -236,8 +237,8 @@ be disabled with
 
 # BUGS
 
-Please report any bugs or feature requests on the bugtracker website
-https://github.com/HayoBaan/File-stat-Extra/issues
+Please report any bugs or feature requests on the bugtracker
+[website](https://github.com/HayoBaan/File-stat-Extra/issues).
 
 When submitting a bug or request, please include a test-file or a
 patch to an existing test-file that illustrates the bug or desired
@@ -260,7 +261,7 @@ available. This may change in a future version of this module.
 
 # AUTHOR
 
-Hayo Baan <info@hayobaan.nl>
+Hayo Baan <hayobaan@cpan.org>
 
 # COPYRIGHT AND LICENSE
 
