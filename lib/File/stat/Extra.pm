@@ -8,10 +8,10 @@ use 5.006;
 # ABSTRACT: An extension of the File::stat module, provides additional methods.
 # VERSION
 
+=head1 SYNOPSIS
+
 =for test_synopsis
 my ($st, $file);
-
-=head1 SYNOPSIS
 
   use File::stat::Extra;
 
