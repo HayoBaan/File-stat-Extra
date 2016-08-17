@@ -1,6 +1,8 @@
 Revision history for Perl module {{$dist->name}}
 
 {{$NEXT}}
+
+0.008     2016-08-17
   * Fixed misplaced SYNOPSIS
   * Added Travis and AppVeyor testing
 

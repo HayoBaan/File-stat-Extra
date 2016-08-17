@@ -5,9 +5,30 @@ NAME
 
 VERSION
 
-    version 0.007
+    version 0.008
 
 SYNOPSIS
+
+      use File::stat::Extra;
+    
+      $st = lstat($file) or die "No $file: $!";
+    
+      if ($st->isLink) {
+          print "$file is a symbolic link";
+      }
+    
+      if (-x $st) {
+          print "$file is executable";
+      }
+    
+      use Fcntl 'S_IRUSR';
+      if ( $st->cando(S_IRUSR, 1) ) {
+          print "My effective uid can read $file";
+      }
+    
+      if ($st == stat($file)) {
+          printf "%s and $file are the same", $st->file;
+      }
 
 DESCRIPTION
 
@@ -202,27 +223,6 @@ METHODS
     As the other operators (+, -, *, etc.) are meaningless, they have not
     been overloaded and will cause a run-time error.
 
-      use File::stat::Extra;
-    
-      $st = lstat($file) or die "No $file: $!";
-    
-      if ($st->isLink) {
-          print "$file is a symbolic link";
-      }
-    
-      if (-x $st) {
-          print "$file is executable";
-      }
-    
-      use Fcntl 'S_IRUSR';
-      if ( $st->cando(S_IRUSR, 1) ) {
-          print "My effective uid can read $file";
-      }
-    
-      if ($st == stat($file)) {
-          printf "%s and $file are the same", $st->file;
-      }
-
 WARNINGS
 
     When a file (handle) can not be (l)stat-ed, a warning Unable to stat:
@@ -274,7 +274,7 @@ SEE ALSO
 
 AUTHOR
 
-    Hayo Baan <hayobaan@cpan.org>
+    Hayo Baan <info@hayobaan.com>
 
 COPYRIGHT AND LICENSE
 
