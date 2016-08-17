@@ -1,6 +1,8 @@
 Revision history for Perl module {{$dist->name}}
 
 {{$NEXT}}
+  * Fixed misplaced SYNOPSIS
+  * Added Travis and AppVeyor testing
 
 0.007     2016-08-10
   * Amendments for Test::Synopsis > v0.13
