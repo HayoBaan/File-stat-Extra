@@ -11,8 +11,9 @@ use File::Spec;
 
 my $testfile = "corpus/testfile";
 my $testlink;
+my $linksProperlySupported;
 
-if (eval { symlink('',''); 1 }) {
+if (defined eval { &{"Fcntl::S_IFLNK"} } && eval { symlink('',''); 1 }) {
     # Create symlink
     $testlink = "corpus/testlink.tmp";
     symlink "testfile", "$testlink" or die "Couldn't create symlink $testlink for $testfile: $!";
