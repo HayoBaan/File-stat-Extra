@@ -1,4 +1,3 @@
-[![Build Status](https://travis-ci.org/HayoBaan/File-stat-Extra.svg?branch=master)](https://travis-ci.org/HayoBaan/File-stat-Extra)
 [![Kwalitee status](https://cpants.cpanauthors.org/dist/File-stat-Extra.png)](https://cpants.cpanauthors.org/dist/File-stat-Extra)
 
 # NAME
@@ -7,7 +6,7 @@ File::stat::Extra - An extension of the File::stat module, provides additional m
 
 # VERSION
 
-version 0.009
+version 0.010
 
 # SYNOPSIS
 

@@ -1,6 +1,8 @@
 Revision history for Perl module {{$dist->name}}
 
 {{$NEXT}}
+
+0.010     2026-01-18
   * Fixed tests on Windows
   * Skipping tests when installing dependencies in AppVeyor build
   * Removed travis-ci
