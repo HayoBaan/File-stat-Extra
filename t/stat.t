@@ -28,10 +28,11 @@ sub diagnose {
 
     for my $st (@_) {
         if (ref $st) {
-            $txt .= sprintf("File=%s, dev=%d, ino=%d,\nmode=%06o (type=%06o, perms=%06o),\nnlink=%d, uid=%s, gid=%s, rdev=%s, size=%d,\natime=%s, mtime=%s, ctime=%s,\nblksize=%d, blocks=%d\n", $st->file, $st->dev, $st->ino, $st->mode, $st->filetype, $st->permissions, $st->nlink,
-                $st->uid, $st->gid, $st->rdev, $st->size,
-                scalar localtime($st->atime), scalar localtime($st->mtime), scalar localtime($st->ctime),
-                $st->blksize, $st->blocks);
+            $txt .= sprintf("File=%s, dev=%d, ino=%d,\nmode=%06o (type=%06o, perms=%06o),\nnlink=%d, uid=%s, gid=%s, rdev=%s, size=%d,\natime=%s, mtime=%s, ctime=%s,\nblksize=%d, blocks=%d\n",
+                            $st->file, $st->dev, $st->ino, $st->mode, $st->filetype, $st->permissions, $st->nlink,
+                            $st->uid, $st->gid, $st->rdev, $st->size,
+                            scalar localtime($st->atime), scalar localtime($st->mtime), scalar localtime($st->ctime),
+                            $st->blksize || 0, $st->blocks || 0);
             $txt .= 'Object=' . join('', explain($st));
         } else {
             $txt .= $st;
