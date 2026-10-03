@@ -21,7 +21,7 @@ my ($st, $file);
 
   $st = lstat($file) or die "No $file: $!";
 
-  if ($st->isLink) {
+  if ($st->is_link) {
       print "$file is a symbolic link";
   }
 
@@ -54,7 +54,7 @@ module.
 * You can now pass in bare file handles to C<stat> and C<lstat> under C<use strict>.
 * File tests C<-t> C<-T>, and C<-B> have been implemented too.
 * Convenience functions C<filetype> and C<permissions> for direct access to filetype and permission parts of the mode field.
-* Named access to common file tests (C<isRegular> / C<isFile>, C<isDir>, C<isLink>, C<isBlock>, C<isChar>, C<isFIFO> / C<isPipe>, C<isSocket>).
+* Named access to common file tests (C<is_regular> / C<is_file>, C<is_dir>, C<is_link>, C<is_block>, C<is_char>, C<is_fifo> / C<is_pipe>, C<is_socket>).
 * Access to the name of the file / file handle used for the stat (C<file>, C<abs_file> / C<target>).
 
 =head1 SEE ALSO
@@ -301,85 +301,101 @@ sub filetype {
     return Fcntl::S_IFMT($_[0]->mode);
 }
 
-=method isFile
+=method is_file
 
-=method isRegular
+=method is_regular
 
-Returns true if the file is a regular file (same as -f file test).
+Returns true if the file is a regular file (same as -f file test). Also available under the camelCase names C<isFile> and C<isRegular>.
 
 =cut
 
-sub isFile {
+sub is_file {
     return S_ISREG($_[0]->mode);
 }
 
-*isRegular = *isFile;
+*is_regular = \&is_file;
 
-=method isDir
+=method is_dir
 
-Returns true if the file is a directory (same as -d file test).
+Returns true if the file is a directory (same as -d file test). Also available under the camelCase name C<isDir>.
 
 =cut
 
-sub isDir {
+sub is_dir {
     return S_ISDIR($_[0]->mode);
 }
 
-=method isLink
+=method is_link
 
-Returns true if the file is a symbolic link (same as -l file test).
+Returns true if the file is a symbolic link (same as -l file test). Also available
+under the camelCase name C<isLink>.
 
 Note: Only relevant when C<lstat> was used!
 
 =cut
 
-sub isLink {
+sub is_link {
     return S_ISLNK($_[0]->mode);
 }
 
-=method isBlock
+=method is_block
 
-Returns true if the file is a block special file (same as -b file test).
+Returns true if the file is a block special file (same as -b file test). Also available under the camelCase name C<isBlock>.
 
 =cut
 
-sub isBlock {
+sub is_block {
     return S_ISBLK($_[0]->mode);
 }
 
-=method isChar
+=method is_char
 
-Returns true if the file is a character special file (same as -c file test).
+Returns true if the file is a character special file (same as -c file test). Also available under the camelCase name C<isChar>.
 
 =cut
 
-sub isChar {
+sub is_char {
     return S_ISCHR($_[0]->mode);
 }
 
-=method isFIFO
+=method is_fifo
 
-=method isPipe
+=method is_pipe
 
-Returns true if the file is a FIFO file or, in case of a file handle, a pipe  (same as -p file test).
+Returns true if the file is a FIFO file or, in case of a file handle, a pipe  (same as -p file test). Also available under the camelCase names C<isFIFO> and C<isPipe>.
 
 =cut
 
-sub isFIFO {
+sub is_fifo {
     return S_ISFIFO($_[0]->mode);
 }
 
-*isPipe = *isFIFO;
+*is_pipe = \&is_fifo;
 
-=method isSocket
+=method is_socket
 
-Returns true if the file is a socket file (same as -S file test).
+Returns true if the file is a socket file (same as -S file test). Also available under the camelCase name C<isSocket>.
 
 =cut
 
-sub isSocket {
+sub is_socket {
     return S_ISSOCK($_[0]->mode);
 }
+
+# camelCase names, kept for backward compatibility
+*isFile    = \&is_file;
+*isRegular = \&is_file;
+*isDir     = \&is_dir;
+*isLink    = \&is_link;
+*isBlock   = \&is_block;
+*isChar    = \&is_char;
+*isFIFO    = \&is_fifo;
+*isPipe    = \&is_fifo;
+*isSocket  = \&is_socket;
+
+=for Pod::Coverage isFile isRegular isDir isLink isBlock isChar isFIFO isPipe isSocket
+
+=cut
 
 =method -X operator
 
@@ -389,7 +405,7 @@ file system, these operators will use the information from the
 object itself.
 
 The overloaded filetests are only supported from Perl version 5.12 and
-higer. The named access to these tests can still be used though.
+higher. The named access to these tests can still be used though.
 
 Note: in case of the special file tests C<-t>, C<-T>, and C<-B>, the
 file (handle) I<is> tested the I<first> time the operator is
@@ -432,13 +448,13 @@ have not been overloaded and will cause a run-time error.
 
 my %op = (
     # Use the named version of these tests
-    f => sub { $_[0]->isRegular },
-    d => sub { $_[0]->isDir },
-    l => sub { $_[0]->isLink },
-    p => sub { $_[0]->isFIFO },
-    S => sub { $_[0]->isSocket },
-    b => sub { $_[0]->isBlock },
-    c => sub { $_[0]->isChar },
+    f => sub { $_[0]->is_regular },
+    d => sub { $_[0]->is_dir },
+    l => sub { $_[0]->is_link },
+    p => sub { $_[0]->is_fifo },
+    S => sub { $_[0]->is_socket },
+    b => sub { $_[0]->is_block },
+    c => sub { $_[0]->is_char },
 
     # Defer implementation of rest to File::stat
     r => sub { -r $_[0][0] },

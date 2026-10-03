@@ -1,6 +1,10 @@
 Revision history for Perl module {{$dist->name}}
 
 {{$NEXT}}
+  * Methods renamed to snake_case: is_file, is_regular, is_dir, is_link,
+    is_block, is_char, is_fifo, is_pipe, is_socket. The camelCase names
+    (isFile, isRegular, ...) remain available as aliases.
+  * The Markdown README is now README.md (was README.mkdn)
 
 0.010     2026-01-18
   * Fixed tests on Windows

@@ -5,7 +5,7 @@ NAME
 
 VERSION
 
-    version 0.010
+    version 0.010_001
 
 SYNOPSIS
 
@@ -13,7 +13,7 @@ SYNOPSIS
     
       $st = lstat($file) or die "No $file: $!";
     
-      if ($st->isLink) {
+      if ($st->is_link) {
           print "$file is a symbolic link";
       }
     
@@ -49,8 +49,8 @@ DESCRIPTION
       * Convenience functions filetype and permissions for direct access to
       filetype and permission parts of the mode field.
 
-      * Named access to common file tests (isRegular / isFile, isDir,
-      isLink, isBlock, isChar, isFIFO / isPipe, isSocket).
+      * Named access to common file tests (is_regular / is_file, is_dir,
+      is_link, is_block, is_char, is_fifo / is_pipe, is_socket).
 
       * Access to the name of the file / file handle used for the stat
       (file, abs_file / target).
@@ -138,42 +138,47 @@ METHODS
 
     Returns just the filetype of the mode stat field.
 
- isFile
+ is_file
 
- isRegular
+ is_regular
 
-    Returns true if the file is a regular file (same as -f file test).
+    Returns true if the file is a regular file (same as -f file test). Also
+    available under the camelCase names isFile and isRegular.
 
- isDir
+ is_dir
 
-    Returns true if the file is a directory (same as -d file test).
+    Returns true if the file is a directory (same as -d file test). Also
+    available under the camelCase name isDir.
 
- isLink
+ is_link
 
     Returns true if the file is a symbolic link (same as -l file test).
+    Also available under the camelCase name isLink.
 
     Note: Only relevant when lstat was used!
 
- isBlock
+ is_block
 
     Returns true if the file is a block special file (same as -b file
-    test).
+    test). Also available under the camelCase name isBlock.
 
- isChar
+ is_char
 
     Returns true if the file is a character special file (same as -c file
-    test).
+    test). Also available under the camelCase name isChar.
 
- isFIFO
+ is_fifo
 
- isPipe
+ is_pipe
 
     Returns true if the file is a FIFO file or, in case of a file handle, a
-    pipe (same as -p file test).
+    pipe (same as -p file test). Also available under the camelCase names
+    isFIFO and isPipe.
 
- isSocket
+ is_socket
 
-    Returns true if the file is a socket file (same as -S file test).
+    Returns true if the file is a socket file (same as -S file test). Also
+    available under the camelCase name isSocket.
 
  -X operator
 
@@ -183,7 +188,7 @@ METHODS
     itself.
 
     The overloaded filetests are only supported from Perl version 5.12 and
-    higer. The named access to these tests can still be used though.
+    higher. The named access to these tests can still be used though.
 
     Note: in case of the special file tests -t, -T, and -B, the file
     (handle) is tested the first time the operator is used. After the first

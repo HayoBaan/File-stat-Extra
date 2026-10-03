@@ -6,7 +6,7 @@ File::stat::Extra - An extension of the File::stat module, provides additional m
 
 # VERSION
 
-version 0.010
+version 0.010\_001
 
 # SYNOPSIS
 
@@ -14,7 +14,7 @@ version 0.010
 
     $st = lstat($file) or die "No $file: $!";
 
-    if ($st->isLink) {
+    if ($st->is_link) {
         print "$file is a symbolic link";
     }
 
@@ -46,7 +46,7 @@ module.
 - You can now pass in bare file handles to `stat` and `lstat` under `use strict`.
 - File tests `-t` `-T`, and `-B` have been implemented too.
 - Convenience functions `filetype` and `permissions` for direct access to filetype and permission parts of the mode field.
-- Named access to common file tests (`isRegular` / `isFile`, `isDir`, `isLink`, `isBlock`, `isChar`, `isFIFO` / `isPipe`, `isSocket`).
+- Named access to common file tests (`is_regular` / `is_file`, `is_dir`, `is_link`, `is_block`, `is_char`, `is_fifo` / `is_pipe`, `is_socket`).
 - Access to the name of the file / file handle used for the stat (`file`, `abs_file` / `target`).
 
 # FUNCTIONS
@@ -131,39 +131,40 @@ Returns just the permissions (including setuid/setgid/sticky bits) of the `mode`
 
 Returns just the filetype of the `mode` stat field.
 
-## isFile
+## is\_file
 
-## isRegular
+## is\_regular
 
-Returns true if the file is a regular file (same as -f file test).
+Returns true if the file is a regular file (same as -f file test). Also available under the camelCase names `isFile` and `isRegular`.
 
-## isDir
+## is\_dir
 
-Returns true if the file is a directory (same as -d file test).
+Returns true if the file is a directory (same as -d file test). Also available under the camelCase name `isDir`.
 
-## isLink
+## is\_link
 
-Returns true if the file is a symbolic link (same as -l file test).
+Returns true if the file is a symbolic link (same as -l file test). Also available
+under the camelCase name `isLink`.
 
 Note: Only relevant when `lstat` was used!
 
-## isBlock
+## is\_block
 
-Returns true if the file is a block special file (same as -b file test).
+Returns true if the file is a block special file (same as -b file test). Also available under the camelCase name `isBlock`.
 
-## isChar
+## is\_char
 
-Returns true if the file is a character special file (same as -c file test).
+Returns true if the file is a character special file (same as -c file test). Also available under the camelCase name `isChar`.
 
-## isFIFO
+## is\_fifo
 
-## isPipe
+## is\_pipe
 
-Returns true if the file is a FIFO file or, in case of a file handle, a pipe  (same as -p file test).
+Returns true if the file is a FIFO file or, in case of a file handle, a pipe  (same as -p file test). Also available under the camelCase names `isFIFO` and `isPipe`.
 
-## isSocket
+## is\_socket
 
-Returns true if the file is a socket file (same as -S file test).
+Returns true if the file is a socket file (same as -S file test). Also available under the camelCase name `isSocket`.
 
 ## -X operator
 
@@ -173,7 +174,7 @@ file system, these operators will use the information from the
 object itself.
 
 The overloaded filetests are only supported from Perl version 5.12 and
-higer. The named access to these tests can still be used though.
+higher. The named access to these tests can still be used though.
 
 Note: in case of the special file tests `-t`, `-T`, and `-B`, the
 file (handle) _is_ tested the _first_ time the operator is

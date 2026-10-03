@@ -91,7 +91,7 @@ sub main_tests {
     is $st->target, Cwd::abs_path($testfile), "Target$type points to same file (absolute)";
 }
 
-plan tests => 4;
+plan tests => 5;
 
 subtest "Main tests on a file" => sub { main_tests($testfile); };
 
@@ -107,17 +107,17 @@ subtest 'Filetests on a file and directory' => sub {
     my $std = stat('corpus');
 
     ok(-f $testfile,   'testfile is a regular file (normal filetest)');
-    ok($st->isRegular, 'testfile is a regular file (object)') or diagnose($st);
-    ok(!$st->isLink,   'testfile is not a link (stat, object)') or diagnose($st);
-    ok(!$lst->isLink,  'testfile is not a link (lstat, object)') or diagnose($lst);
+    ok($st->is_regular, 'testfile is a regular file (object)') or diagnose($st);
+    ok(!$st->is_link,   'testfile is not a link (stat, object)') or diagnose($st);
+    ok(!$lst->is_link,  'testfile is not a link (lstat, object)') or diagnose($lst);
 
     ok(-d 'corpus',    'corpus is a directory (normal filetest)');
-    ok($std->isDir,    'corpus is a directory (object)') or diagnose($std);
+    ok($std->is_dir,    'corpus is a directory (object)') or diagnose($std);
 
-    ok(!$st->isPipe,   'testfile is not a pipe (object)') or diagnose($st);
-    ok(!$st->isSocket, 'testfile is not a socket (object)') or diagnose($st);
-    ok(!$st->isBlock,  'testfile is not a block (object)') or diagnose($st);
-    ok(!$st->isChar,   'testfile is not a char (object)') or diagnose($st);
+    ok(!$st->is_pipe,   'testfile is not a pipe (object)') or diagnose($st);
+    ok(!$st->is_socket, 'testfile is not a socket (object)') or diagnose($st);
+    ok(!$st->is_block,  'testfile is not a block (object)') or diagnose($st);
+    ok(!$st->is_char,   'testfile is not a char (object)') or diagnose($st);
 
   SKIP: {
         skip 'filetests not overloadable on Perl < v5.12.0', 8 if $^V < 5.012;
@@ -141,8 +141,8 @@ subtest 'Filetests on a file and directory' => sub {
         my $lstl = lstat($testlink);
 
         ok(-l $testlink,  'testlink is a link (normal filetest)');
-        ok(!$stl->isLink, 'testlink is not a link (stat, object)') or diagnose($stl);
-        ok($lstl->isLink, 'testlink is a link (lstat, object)') or diagnose($lstl);
+        ok(!$stl->is_link, 'testlink is not a link (stat, object)') or diagnose($stl);
+        ok($lstl->is_link, 'testlink is a link (lstat, object)') or diagnose($lstl);
 
       SKIP: {
             skip 'filetests not overloadable on Perl < v5.12.0', 1 if $^V < 5.012;
@@ -173,5 +173,23 @@ subtest 'File / link equality tests' => sub {
             or diagnose($st, $lstl);
         cmp_ok($st, 'ne', $lstl, 'testfile and unresolved testlink do not represent the same file (string)')
             or diagnose($st, $lstl);
+    }
+};
+
+# The camelCase method names are kept as aliases for backward compatibility,
+# and must return exactly what their snake_case counterparts return
+subtest "camelCase aliases" => sub {
+    my %alias_of = (
+        isFile => 'is_file', isRegular => 'is_regular', isDir  => 'is_dir',
+        isLink => 'is_link', isBlock   => 'is_block',   isChar => 'is_char',
+        isFIFO => 'is_fifo', isPipe    => 'is_pipe',    isSocket => 'is_socket',
+    );
+    plan tests => 2 * keys %alias_of;
+    for my $file ($testfile, 'corpus') {
+        my $st = stat($file);
+        for my $alias (sort keys %alias_of) {
+            my $method = $alias_of{$alias};
+            is(!!$st->$alias, !!$st->$method, "$alias equals $method for $file");
+        }
     }
 };
