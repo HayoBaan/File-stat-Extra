@@ -264,11 +264,11 @@ available. This may change in a future version of this module.
 
 # AUTHOR
 
-Hayo Baan <info@hayobaan.com>
+Hayo Baan (it at hayobaan.nl)
 
 # COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2015 by Hayo Baan.
+This software is copyright (c) 2015–2026 by Hayo Baan.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

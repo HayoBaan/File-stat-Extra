@@ -8,7 +8,7 @@ use ExtUtils::MakeMaker;
 
 my %WriteMakefileArgs = (
   "ABSTRACT" => "An extension of the File::stat module, provides additional methods.",
-  "AUTHOR" => "Hayo Baan <info\@hayobaan.com>",
+  "AUTHOR" => "Hayo Baan (it at hayobaan.nl)",
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => 0
   },
