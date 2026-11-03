@@ -101,10 +101,10 @@ These methods provide named acced to the same fields in the original
 
 ## cando( _ACCESS_, _EFFECTIVE_ )
 
-Interprets the `mode`, `uid` and `gid` fields, and returns whether
+Interprets the `mode`, `uid`, and `gid` fields, and returns whether
 or not the current process would be allowed the specified access.
 
-_ACCESS_ is one of `S_IRUSR`, `S_IWUSR` or `S_IXUSR` from the
+_ACCESS_ is one of `S_IRUSR`, `S_IWUSR`, or `S_IXUSR` from the
 [Fcntl](https://metacpan.org/pod/Fcntl) module, and _EFFECTIVE_ indicates whether to use
 effective (true) or real (false) ids.
 

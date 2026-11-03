@@ -107,11 +107,11 @@ METHODS
 
  cando( ACCESS, EFFECTIVE )
 
-    Interprets the mode, uid and gid fields, and returns whether or not the
-    current process would be allowed the specified access.
+    Interprets the mode, uid, and gid fields, and returns whether or not
+    the current process would be allowed the specified access.
 
-    ACCESS is one of S_IRUSR, S_IWUSR or S_IXUSR from the Fcntl module, and
-    EFFECTIVE indicates whether to use effective (true) or real (false)
+    ACCESS is one of S_IRUSR, S_IWUSR, or S_IXUSR from the Fcntl module,
+    and EFFECTIVE indicates whether to use effective (true) or real (false)
     ids.
 
  file

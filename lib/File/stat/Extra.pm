@@ -219,10 +219,10 @@ C<stat> result. Just like the original L<File::stat>.
 
 =method cando( I<ACCESS>, I<EFFECTIVE> )
 
-Interprets the C<mode>, C<uid> and C<gid> fields, and returns whether
+Interprets the C<mode>, C<uid>, and C<gid> fields, and returns whether
 or not the current process would be allowed the specified access.
 
-I<ACCESS> is one of C<S_IRUSR>, C<S_IWUSR> or C<S_IXUSR> from the
+I<ACCESS> is one of C<S_IRUSR>, C<S_IWUSR>, or C<S_IXUSR> from the
 L<Fcntl> module, and I<EFFECTIVE> indicates whether to use
 effective (true) or real (false) ids.
 
