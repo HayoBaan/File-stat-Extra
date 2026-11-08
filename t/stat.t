@@ -176,8 +176,8 @@ subtest 'File / link equality tests' => sub {
     }
 };
 
-# The camelCase method names are kept as aliases for backward compatibility,
-# and must return exactly what their snake_case counterparts return
+# The camelCase method names are kept as aliases for backward compatibility, and must return exactly
+# what their snake_case counterparts return
 subtest "camelCase aliases" => sub {
     my %alias_of = (
         isFile => 'is_file', isRegular => 'is_regular', isDir  => 'is_dir',

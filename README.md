@@ -33,14 +33,11 @@ version 0.010\_001
 
 # DESCRIPTION
 
-This module's default exports override the core stat() and lstat()
-functions, replacing them with versions that return
-`File::stat::Extra` objects when called in scalar context. In list
-context the same 13 item list is returned as with the original `stat`
-and `lstat` functions.
+This module's default exports override the core stat() and lstat() functions, replacing them with
+versions that return `File::stat::Extra` objects when called in scalar context. In list context the
+same 13 item list is returned as with the original `stat` and `lstat` functions.
 
-`File::stat::Extra` is an extension of the [File::stat](https://metacpan.org/pod/File%3A%3Astat)
-module.
+`File::stat::Extra` is an extension of the [File::stat](https://metacpan.org/pod/File%3A%3Astat) module.
 
 - Returns non-object result in list context.
 - You can now pass in bare file handles to `stat` and `lstat` under `use strict`.
@@ -63,10 +60,9 @@ module.
 
 ## lstat( _EXPR_ )
 
-When called in list context, these functions behave as the original
-`stat` and `lstat` functions, returning the 13 element `stat` list.
-When called in scalar context, a `File::stat::Extra` object is
-returned with the methods as outlined below.
+When called in list context, these functions behave as the original `stat` and `lstat` functions,
+returning the 13 element `stat` list. When called in scalar context, a `File::stat::Extra` object
+is returned with the methods as outlined below.
 
 # METHODS
 
@@ -96,26 +92,24 @@ returned with the methods as outlined below.
 
 ## blocks
 
-These methods provide named acced to the same fields in the original
-`stat` result. Just like the original [File::stat](https://metacpan.org/pod/File%3A%3Astat).
+These methods provide named acced to the same fields in the original `stat` result. Just like the
+original [File::stat](https://metacpan.org/pod/File%3A%3Astat).
 
 ## cando( _ACCESS_, _EFFECTIVE_ )
 
-Interprets the `mode`, `uid`, and `gid` fields, and returns whether
-or not the current process would be allowed the specified access.
+Interprets the `mode`, `uid`, and `gid` fields, and returns whether or not the current process
+would be allowed the specified access.
 
-_ACCESS_ is one of `S_IRUSR`, `S_IWUSR`, or `S_IXUSR` from the
-[Fcntl](https://metacpan.org/pod/Fcntl) module, and _EFFECTIVE_ indicates whether to use
-effective (true) or real (false) ids.
+_ACCESS_ is one of `S_IRUSR`, `S_IWUSR`, or `S_IXUSR` from the [Fcntl](https://metacpan.org/pod/Fcntl) module, and _EFFECTIVE_
+indicates whether to use effective (true) or real (false) ids.
 
 ## file
 
-Returns the full path to the original file (or the filehandle) on which
-`stat` or `lstat` was called.
+Returns the full path to the original file (or the filehandle) on which `stat` or `lstat` was
+called.
 
-Note: Symlinks are not resolved. And, like `rel2abs`, neither are
-`x/../y` constructs. Use the `abs_file` / `target` methods to
-resolve these too.
+Note: Symlinks are not resolved. And, like `rel2abs`, neither are `x/../y` constructs. Use the
+`abs_file` / `target` methods to resolve these too.
 
 ## abs\_file
 
@@ -135,108 +129,105 @@ Returns just the filetype of the `mode` stat field.
 
 ## is\_regular
 
-Returns true if the file is a regular file (same as -f file test). Also available under the camelCase names `isFile` and `isRegular`.
+Returns true if the file is a regular file (same as -f file test). Also available under the
+camelCase names `isFile` and `isRegular`.
 
 ## is\_dir
 
-Returns true if the file is a directory (same as -d file test). Also available under the camelCase name `isDir`.
+Returns true if the file is a directory (same as -d file test). Also available under the camelCase
+name `isDir`.
 
 ## is\_link
 
-Returns true if the file is a symbolic link (same as -l file test). Also available
-under the camelCase name `isLink`.
+Returns true if the file is a symbolic link (same as -l file test). Also available under the
+camelCase name `isLink`.
 
 Note: Only relevant when `lstat` was used!
 
 ## is\_block
 
-Returns true if the file is a block special file (same as -b file test). Also available under the camelCase name `isBlock`.
+Returns true if the file is a block special file (same as -b file test). Also available under the
+camelCase name `isBlock`.
 
 ## is\_char
 
-Returns true if the file is a character special file (same as -c file test). Also available under the camelCase name `isChar`.
+Returns true if the file is a character special file (same as -c file test). Also available under
+the camelCase name `isChar`.
 
 ## is\_fifo
 
 ## is\_pipe
 
-Returns true if the file is a FIFO file or, in case of a file handle, a pipe  (same as -p file test). Also available under the camelCase names `isFIFO` and `isPipe`.
+Returns true if the file is a FIFO file or, in case of a file handle, a pipe (same as -p file test).
+Also available under the camelCase names `isFIFO` and `isPipe`.
 
 ## is\_socket
 
-Returns true if the file is a socket file (same as -S file test). Also available under the camelCase name `isSocket`.
+Returns true if the file is a socket file (same as -S file test). Also available under the camelCase
+name `isSocket`.
 
 ## -X operator
 
-You can use the file test operators on the `File::stat::Extra` object
-just as you would on a file (handle). However, instead of querying the
-file system, these operators will use the information from the
-object itself.
+You can use the file test operators on the `File::stat::Extra` object just as you would on a file
+(handle). However, instead of querying the file system, these operators will use the information
+from the object itself.
 
-The overloaded filetests are only supported from Perl version 5.12 and
-higher. The named access to these tests can still be used though.
+The overloaded filetests are only supported from Perl version 5.12 and higher. The named access to
+these tests can still be used though.
 
-Note: in case of the special file tests `-t`, `-T`, and `-B`, the
-file (handle) _is_ tested the _first_ time the operator is
-used. After the first time, the initial result is re-used and no
+Note: in case of the special file tests `-t`, `-T`, and `-B`, the file (handle) _is_ tested the
+_first_ time the operator is used. After the first time, the initial result is re-used and no
 further testing of the file (handle) is performed.
 
 ## Unary `""` (stringification) operator
 
-The unary `""` (stringification) operator is overloaded to return the the device and inode
-numbers separated by a `.` (`_dev_._ino_`). This yields a uniqe file identifier (as string).
+The unary `""` (stringification) operator is overloaded to return the the device and inode numbers
+separated by a `.` (`_dev_._ino_`). This yields a uniqe file identifier (as string).
 
 ## Comparison operators `<=>`, `cmp`, and `~~`
 
-The comparison operators use the string representation of the
-`File::stat::Extra` object. So, to see if two `File::stat::Extra`
-object point to the same (hardlinked) file, you can simply say
+The comparison operators use the string representation of the `File::stat::Extra` object. So, to
+see if two `File::stat::Extra` object point to the same (hardlinked) file, you can simply say
 something like this:
 
     print 'Same file' if $obj1 == $obj2;
 
-For objects created from an `stat` of a symbolic link, the actual
-_destination_ of the link is used in the comparison! If you want to
-compare the actual symlink file, use `lstat` instead.
+For objects created from an `stat` of a symbolic link, the actual _destination_ of the link is
+used in the comparison! If you want to compare the actual symlink file, use `lstat` instead.
 
-Note: All comparisons (also the numeric versions) are performed on the
-full stringified versions of the object. This to prevent files on the
-same device, but with an inode number ending in a zero to compare
-equally while they aren't (e.g., 5.10 and 5.100 compare equal
-numerically but denote a different file).
+Note: All comparisons (also the numeric versions) are performed on the full stringified versions of
+the object. This prevents files on the same device, with an inode number ending in a zero, from
+comparing equal while they aren't. For example, 5.10 and 5.100 compare equal numerically, but they
+denote different files.
 
-Note: the smartmatch `~~` operator is only overloaded on Perl version
-5.10 and above.
+Note: the smartmatch `~~` operator is only overloaded on Perl version 5.10 and above.
 
 ## Other operators
 
-As the other operators (`+`, `-`, `*`, etc.) are meaningless, they
-have not been overloaded and will cause a run-time error.
+As the other operators (`+`, `-`, `*`, etc.) are meaningless, they have not been overloaded and
+will cause a run-time error.
 
 # WARNINGS
 
-When a file (handle) can not be (l)stat-ed, a warning `Unable to
-stat: %s`. To disable this warning, specify
+When a file (handle) can not be (l)stat-ed, a warning `Unable to stat: %s`. To disable this
+warning, specify
 
     no warnings "File::stat::Extra";
 
-The following warnings are inhereted from `File::stat`, these can all
-be disabled with
+The following warnings are inhereted from `File::stat`, these can all be disabled with
 
     no warnings "File::stat";
 
 - File::stat ignores use filetest 'access'
 
-    You have tried to use one of the `-rwxRWX` filetests with `use
-    filetest 'access'` in effect. `File::stat` will ignore the pragma, and
-    just use the information in the `mode` member as usual.
+    You have tried to use one of the `-rwxRWX` filetests with `use filetest 'access'` in effect.
+    `File::stat` will ignore the pragma, and just use the information in the `mode` member as usual.
 
 - File::stat ignores VMS ACLs
 
-    VMS systems have a permissions structure that cannot be completely
-    represented in a stat buffer, and unlike on other systems the builtin
-    filetest operators respect this. The `File::stat` overloads, however,
-    do not, since the information required is not available.
+    VMS systems have a permissions structure that cannot be completely represented in a stat buffer, and
+    unlike on other systems the builtin filetest operators respect this. The `File::stat` overloads,
+    however, do not, since the information required is not available.
 
 # BUGS
 
@@ -249,13 +240,12 @@ feature.
 
 # COMPATIBILITY
 
-As with [File::stat](https://metacpan.org/pod/File%3A%3Astat), you can no longer use the implicit `$_` or the
-special filehandle `_` with this module's versions of `stat` and
-`lstat`.
+As with [File::stat](https://metacpan.org/pod/File%3A%3Astat), you can no longer use the implicit `$_` or the special filehandle `_` with
+this module's versions of `stat` and `lstat`.
 
-Currently `File::stat::Extra` only provides an object interface, the
-[File::stat](https://metacpan.org/pod/File%3A%3Astat) `$st_*` variables and `st_cando` funtion are not
-available. This may change in a future version of this module.
+Currently `File::stat::Extra` only provides an object interface, the [File::stat](https://metacpan.org/pod/File%3A%3Astat) `$st_*`
+variables and `st_cando` funtion are not available. This may change in a future version of this
+module.
 
 # SEE ALSO
 

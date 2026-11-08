@@ -40,14 +40,11 @@ my ($st, $file);
 
 =head1 DESCRIPTION
 
-This module's default exports override the core stat() and lstat()
-functions, replacing them with versions that return
-C<File::stat::Extra> objects when called in scalar context. In list
-context the same 13 item list is returned as with the original C<stat>
-and C<lstat> functions.
+This module's default exports override the core stat() and lstat() functions, replacing them with
+versions that return C<File::stat::Extra> objects when called in scalar context. In list context the
+same 13 item list is returned as with the original C<stat> and C<lstat> functions.
 
-C<File::stat::Extra> is an extension of the L<File::stat>
-module.
+C<File::stat::Extra> is an extension of the L<File::stat> module.
 
 =for :list
 * Returns non-object result in list context.
@@ -65,23 +62,21 @@ module.
 
 =head1 COMPATIBILITY
 
-As with L<File::stat>, you can no longer use the implicit C<$_> or the
-special filehandle C<_> with this module's versions of C<stat> and
-C<lstat>.
+As with L<File::stat>, you can no longer use the implicit C<$_> or the special filehandle C<_> with
+this module's versions of C<stat> and C<lstat>.
 
-Currently C<File::stat::Extra> only provides an object interface, the
-L<File::stat> C<$st_*> variables and C<st_cando> funtion are not
-available. This may change in a future version of this module.
+Currently C<File::stat::Extra> only provides an object interface, the L<File::stat> C<$st_*>
+variables and C<st_cando> funtion are not available. This may change in a future version of this
+module.
 
 =head1 WARNINGS
 
-When a file (handle) can not be (l)stat-ed, a warning C<Unable to
-stat: %s>. To disable this warning, specify
+When a file (handle) can not be (l)stat-ed, a warning C<Unable to stat: %s>. To disable this
+warning, specify
 
     no warnings "File::stat::Extra";
 
-The following warnings are inhereted from C<File::stat>, these can all
-be disabled with
+The following warnings are inhereted from C<File::stat>, these can all be disabled with
 
     no warnings "File::stat";
 
@@ -89,24 +84,22 @@ be disabled with
 
 =item File::stat ignores use filetest 'access'
 
-You have tried to use one of the C<-rwxRWX> filetests with C<use
-filetest 'access'> in effect. C<File::stat> will ignore the pragma, and
-just use the information in the C<mode> member as usual.
+You have tried to use one of the C<-rwxRWX> filetests with C<use filetest 'access'> in effect.
+C<File::stat> will ignore the pragma, and just use the information in the C<mode> member as usual.
 
 =item File::stat ignores VMS ACLs
 
-VMS systems have a permissions structure that cannot be completely
-represented in a stat buffer, and unlike on other systems the builtin
-filetest operators respect this. The C<File::stat> overloads, however,
-do not, since the information required is not available.
+VMS systems have a permissions structure that cannot be completely represented in a stat buffer, and
+unlike on other systems the builtin filetest operators respect this. The C<File::stat> overloads,
+however, do not, since the information required is not available.
 
 =back
 
 =cut
 
-# Note: we are not defining File::stat::Extra as a subclass of File::stat
-# as we need to add an additional field and can not rely on the fact that
-# File::stat will always be implemented as an array (struct).
+# Note: we are not defining File::stat::Extra as a subclass of File::stat. We need to add an
+# additional field, and can not rely on the fact that File::stat will always be implemented as an
+# array (struct).
 
 our @ISA = qw(Exporter);
 our @EXPORT = qw(stat lstat);
@@ -131,10 +124,9 @@ $Carp::Internal{ (__PACKAGE__) }++; # To get warnings reported at correct caller
 
 =func lstat( I<EXPR> )
 
-When called in list context, these functions behave as the original
-C<stat> and C<lstat> functions, returning the 13 element C<stat> list.
-When called in scalar context, a C<File::stat::Extra> object is
-returned with the methods as outlined below.
+When called in list context, these functions behave as the original C<stat> and C<lstat> functions,
+returning the 13 element C<stat> list. When called in scalar context, a C<File::stat::Extra> object
+is returned with the methods as outlined below.
 
 =cut
 
@@ -214,17 +206,16 @@ sub lstat(*) { ## no critic (Subroutines::ProhibitSubroutinePrototypes)
 
 =method blocks
 
-These methods provide named acced to the same fields in the original
-C<stat> result. Just like the original L<File::stat>.
+These methods provide named acced to the same fields in the original C<stat> result. Just like the
+original L<File::stat>.
 
 =method cando( I<ACCESS>, I<EFFECTIVE> )
 
-Interprets the C<mode>, C<uid>, and C<gid> fields, and returns whether
-or not the current process would be allowed the specified access.
+Interprets the C<mode>, C<uid>, and C<gid> fields, and returns whether or not the current process
+would be allowed the specified access.
 
-I<ACCESS> is one of C<S_IRUSR>, C<S_IWUSR>, or C<S_IXUSR> from the
-L<Fcntl> module, and I<EFFECTIVE> indicates whether to use
-effective (true) or real (false) ids.
+I<ACCESS> is one of C<S_IRUSR>, C<S_IWUSR>, or C<S_IXUSR> from the L<Fcntl> module, and I<EFFECTIVE>
+indicates whether to use effective (true) or real (false) ids.
 
 =cut
 
@@ -240,11 +231,10 @@ BEGIN {
 
 =cut
 
-    # Create own versions of these functions as they will croak on use
-    # if the platform doesn't define them. It's important to avoid
-    # inflicting that on the user.
-    # Note: to stay (more) version independent, we do not rely on the
-    # implementation in File::stat, but rather recreate here.
+    # Create own versions of these functions as they will croak on use if the platform doesn't
+    # define them. It's important to avoid inflicting that on the user.
+    # Note: to stay (more) version independent, we do not rely on the implementation in File::stat,
+    # but rather recreate here.
     for (qw(BLK CHR DIR LNK REG SOCK)) {
         *{"S_IS$_"} = defined eval { &{"Fcntl::S_IF$_"} } ? \&{"Fcntl::S_IS$_"} : sub { '' };
     }
@@ -254,12 +244,11 @@ BEGIN {
 
 =method file
 
-Returns the full path to the original file (or the filehandle) on which
-C<stat> or C<lstat> was called.
+Returns the full path to the original file (or the filehandle) on which C<stat> or C<lstat> was
+called.
 
-Note: Symlinks are not resolved. And, like C<rel2abs>, neither are
-C<x/../y> constructs. Use the C<abs_file> / C<target> methods to
-resolve these too.
+Note: Symlinks are not resolved. And, like C<rel2abs>, neither are C<x/../y> constructs. Use the
+C<abs_file> / C<target> methods to resolve these too.
 
 =cut
 
@@ -305,7 +294,8 @@ sub filetype {
 
 =method is_regular
 
-Returns true if the file is a regular file (same as -f file test). Also available under the camelCase names C<isFile> and C<isRegular>.
+Returns true if the file is a regular file (same as -f file test). Also available under the
+camelCase names C<isFile> and C<isRegular>.
 
 =cut
 
@@ -317,7 +307,8 @@ sub is_file {
 
 =method is_dir
 
-Returns true if the file is a directory (same as -d file test). Also available under the camelCase name C<isDir>.
+Returns true if the file is a directory (same as -d file test). Also available under the camelCase
+name C<isDir>.
 
 =cut
 
@@ -327,8 +318,8 @@ sub is_dir {
 
 =method is_link
 
-Returns true if the file is a symbolic link (same as -l file test). Also available
-under the camelCase name C<isLink>.
+Returns true if the file is a symbolic link (same as -l file test). Also available under the
+camelCase name C<isLink>.
 
 Note: Only relevant when C<lstat> was used!
 
@@ -340,7 +331,8 @@ sub is_link {
 
 =method is_block
 
-Returns true if the file is a block special file (same as -b file test). Also available under the camelCase name C<isBlock>.
+Returns true if the file is a block special file (same as -b file test). Also available under the
+camelCase name C<isBlock>.
 
 =cut
 
@@ -350,7 +342,8 @@ sub is_block {
 
 =method is_char
 
-Returns true if the file is a character special file (same as -c file test). Also available under the camelCase name C<isChar>.
+Returns true if the file is a character special file (same as -c file test). Also available under
+the camelCase name C<isChar>.
 
 =cut
 
@@ -362,7 +355,8 @@ sub is_char {
 
 =method is_pipe
 
-Returns true if the file is a FIFO file or, in case of a file handle, a pipe  (same as -p file test). Also available under the camelCase names C<isFIFO> and C<isPipe>.
+Returns true if the file is a FIFO file or, in case of a file handle, a pipe (same as -p file test).
+Also available under the camelCase names C<isFIFO> and C<isPipe>.
 
 =cut
 
@@ -374,7 +368,8 @@ sub is_fifo {
 
 =method is_socket
 
-Returns true if the file is a socket file (same as -S file test). Also available under the camelCase name C<isSocket>.
+Returns true if the file is a socket file (same as -S file test). Also available under the camelCase
+name C<isSocket>.
 
 =cut
 
@@ -399,50 +394,44 @@ sub is_socket {
 
 =method -X operator
 
-You can use the file test operators on the C<File::stat::Extra> object
-just as you would on a file (handle). However, instead of querying the
-file system, these operators will use the information from the
-object itself.
+You can use the file test operators on the C<File::stat::Extra> object just as you would on a file
+(handle). However, instead of querying the file system, these operators will use the information
+from the object itself.
 
-The overloaded filetests are only supported from Perl version 5.12 and
-higher. The named access to these tests can still be used though.
+The overloaded filetests are only supported from Perl version 5.12 and higher. The named access to
+these tests can still be used though.
 
-Note: in case of the special file tests C<-t>, C<-T>, and C<-B>, the
-file (handle) I<is> tested the I<first> time the operator is
-used. After the first time, the initial result is re-used and no
+Note: in case of the special file tests C<-t>, C<-T>, and C<-B>, the file (handle) I<is> tested the
+I<first> time the operator is used. After the first time, the initial result is re-used and no
 further testing of the file (handle) is performed.
 
 =method Unary C<""> (stringification) operator
 
-The unary C<""> (stringification) operator is overloaded to return the the device and inode
-numbers separated by a C<.> (C<I<dev>.I<ino>>). This yields a uniqe file identifier (as string).
+The unary C<""> (stringification) operator is overloaded to return the the device and inode numbers
+separated by a C<.> (C<I<dev>.I<ino>>). This yields a uniqe file identifier (as string).
 
 =method Comparison operators C<< <=> >>, C<cmp>, and C<~~>
 
-The comparison operators use the string representation of the
-C<File::stat::Extra> object. So, to see if two C<File::stat::Extra>
-object point to the same (hardlinked) file, you can simply say
+The comparison operators use the string representation of the C<File::stat::Extra> object. So, to
+see if two C<File::stat::Extra> object point to the same (hardlinked) file, you can simply say
 something like this:
 
     print 'Same file' if $obj1 == $obj2;
 
-For objects created from an C<stat> of a symbolic link, the actual
-I<destination> of the link is used in the comparison! If you want to
-compare the actual symlink file, use C<lstat> instead.
+For objects created from an C<stat> of a symbolic link, the actual I<destination> of the link is
+used in the comparison! If you want to compare the actual symlink file, use C<lstat> instead.
 
-Note: All comparisons (also the numeric versions) are performed on the
-full stringified versions of the object. This to prevent files on the
-same device, but with an inode number ending in a zero to compare
-equally while they aren't (e.g., 5.10 and 5.100 compare equal
-numerically but denote a different file).
+Note: All comparisons (also the numeric versions) are performed on the full stringified versions of
+the object. This prevents files on the same device, with an inode number ending in a zero, from
+comparing equal while they aren't. For example, 5.10 and 5.100 compare equal numerically, but they
+denote different files.
 
-Note: the smartmatch C<~~> operator is only overloaded on Perl version
-5.10 and above.
+Note: the smartmatch C<~~> operator is only overloaded on Perl version 5.10 and above.
 
 =method Other operators
 
-As the other operators (C<+>, C<->, C<*>, etc.) are meaningless, they
-have not been overloaded and will cause a run-time error.
+As the other operators (C<+>, C<->, C<*>, etc.) are meaningless, they have not been overloaded and
+will cause a run-time error.
 
 =cut
 
@@ -512,8 +501,7 @@ use overload
     # File test operators (as of Perl v5.12)
     $^V >= 5.012 ? (-X => \&_filetest) : (),
 
-    # Unary "" returns the object as "dev.ino", this should be a
-    # unique string for each file.
+    # Unary "" returns the object as "dev.ino", this should be a unique string for each file.
     '""' => \&_dev_ino,
 
     # Comparison is done based on the unique string created with the stringification

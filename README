@@ -215,10 +215,10 @@ METHODS
     compare the actual symlink file, use lstat instead.
 
     Note: All comparisons (also the numeric versions) are performed on the
-    full stringified versions of the object. This to prevent files on the
-    same device, but with an inode number ending in a zero to compare
-    equally while they aren't (e.g., 5.10 and 5.100 compare equal
-    numerically but denote a different file).
+    full stringified versions of the object. This prevents files on the
+    same device, with an inode number ending in a zero, from comparing
+    equal while they aren't. For example, 5.10 and 5.100 compare equal
+    numerically, but they denote different files.
 
     Note: the smartmatch ~~ operator is only overloaded on Perl version
     5.10 and above.
