@@ -132,52 +132,52 @@ is returned with the methods as outlined below.
 
 # Runs stat or lstat on "file"
 sub __stat_lstat {
-    my $func = shift;
-    my $file = shift;
+  my $func = shift;
+  my $file = shift;
 
-    return $func eq 'lstat' ? CORE::lstat($file) : CORE::stat($file);
+  return $func eq 'lstat' ? CORE::lstat($file) : CORE::stat($file);
 }
 
 # Wrapper around stat/lstat, handles passing of file as a bare handle too
 sub _stat_lstat {
-    my $func = shift;
-    my $file = shift;
+  my $func = shift;
+  my $file = shift;
 
-    my @stat = __stat_lstat($func, $file);
+  my @stat = __stat_lstat($func, $file);
 
-    if (@stat) {
-        # We have a file, so make it absolute (NOT resolving the symlinks)
-        $file = File::Spec->rel2abs($file) if !ref $file;
-    } else {
-        # Try again, interpretting $file as handle
-        no strict 'refs'; ## no critic (TestingAndDebugging::ProhibitNoStrict)
-        local $! = undef;
-        require Symbol;
-        my $fh = \*{ Symbol::qualify($file, caller(1)) };
-        if (defined fileno $fh) {
-            @stat = __stat_lstat($func, $fh);
-        }
-        if (!@stat) {
-            warnings::warnif("Unable to stat: $file");
-            return;
-        }
-        # We have a (valid) file handle, so we make file point to it
-        $file = $fh;
+  if (@stat) {
+    # We have a file, so make it absolute (NOT resolving the symlinks)
+    $file = File::Spec->rel2abs($file) if !ref $file;
+  } else {
+    # Try again, interpretting $file as handle
+    no strict 'refs'; ## no critic (TestingAndDebugging::ProhibitNoStrict)
+    local $! = undef;
+    require Symbol;
+    my $fh = \*{ Symbol::qualify($file, caller(1)) };
+    if (defined fileno $fh) {
+      @stat = __stat_lstat($func, $fh);
     }
-
-    if (wantarray) {
-        return @stat;
-    } else {
-        return bless [ File::stat::populate(@stat), $file ], 'File::stat::Extra';
+    if (!@stat) {
+      warnings::warnif("Unable to stat: $file");
+      return;
     }
+    # We have a (valid) file handle, so we make file point to it
+    $file = $fh;
+  }
+
+  if (wantarray) {
+    return @stat;
+  } else {
+    return bless [File::stat::populate(@stat), $file], 'File::stat::Extra';
+  }
 }
 
 sub stat(*) { ## no critic (Subroutines::ProhibitSubroutinePrototypes)
-    return _stat_lstat('stat', shift);
+  return _stat_lstat('stat', shift);
 }
 
 sub lstat(*) { ## no critic (Subroutines::ProhibitSubroutinePrototypes)
-    return _stat_lstat('lstat', shift);
+  return _stat_lstat('lstat', shift);
 }
 
 =method dev
@@ -220,26 +220,26 @@ indicates whether to use effective (true) or real (false) ids.
 =cut
 
 BEGIN {
-    no strict 'refs'; ## no critic (TestingAndDebugging::ProhibitNoStrict)
+  no strict 'refs'; ## no critic (TestingAndDebugging::ProhibitNoStrict)
 
-    # Define the main field accessors and the cando method using the File::stat version
-    for my $f (qw(dev ino mode nlink uid gid rdev size atime mtime ctime blksize blocks cando)) {
-        *{$f} = sub { $_[0][0]->$f; }
-    }
+  # Define the main field accessors and the cando method using the File::stat version
+  for my $f (qw(dev ino mode nlink uid gid rdev size atime mtime ctime blksize blocks cando)) {
+    *{$f} = sub { $_[0][0]->$f; }
+  }
 
 =for Pod::Coverage S_ISBLK S_ISCHR S_ISDIR S_ISFIFO S_ISLNK S_ISREG S_ISSOCK
 
 =cut
 
-    # Create own versions of these functions as they will croak on use if the platform doesn't
-    # define them. It's important to avoid inflicting that on the user.
-    # Note: to stay (more) version independent, we do not rely on the implementation in File::stat,
-    # but rather recreate here.
-    for (qw(BLK CHR DIR LNK REG SOCK)) {
-        *{"S_IS$_"} = defined eval { &{"Fcntl::S_IF$_"} } ? \&{"Fcntl::S_IS$_"} : sub { '' };
-    }
-    # FIFO flag and macro don't quite follow the S_IF/S_IS pattern above
-    *{'S_ISFIFO'} = defined &Fcntl::S_IFIFO ? \&Fcntl::S_ISFIFO : sub { '' };
+  # Create own versions of these functions as they will croak on use if the platform doesn't define
+  # them. It's important to avoid inflicting that on the user.
+  # Note: to stay (more) version independent, we do not rely on the implementation in File::stat,
+  # but rather recreate here.
+  for (qw(BLK CHR DIR LNK REG SOCK)) {
+    *{"S_IS$_"} = defined eval { &{"Fcntl::S_IF$_"} } ? \&{"Fcntl::S_IS$_"} : sub { '' };
+  }
+  # FIFO flag and macro don't quite follow the S_IF/S_IS pattern above
+  *{'S_ISFIFO'} = defined &Fcntl::S_IFIFO ? \&Fcntl::S_ISFIFO : sub { '' };
 }
 
 =method file
@@ -253,7 +253,7 @@ C<abs_file> / C<target> methods to resolve these too.
 =cut
 
 sub file {
-    return $_[0][1];
+  return $_[0][1];
 }
 
 =method abs_file
@@ -265,7 +265,7 @@ Returns the absolute path of the file. In case of a file handle, this is returne
 =cut
 
 sub abs_file {
-    return ref $_[0]->file ? $_[0]->file : Cwd::abs_path($_[0]->file);
+  return ref $_[0]->file ? $_[0]->file : Cwd::abs_path($_[0]->file);
 }
 
 *target = *abs_file;
@@ -277,7 +277,7 @@ Returns just the permissions (including setuid/setgid/sticky bits) of the C<mode
 =cut
 
 sub permissions {
-    return Fcntl::S_IMODE($_[0]->mode);
+  return Fcntl::S_IMODE($_[0]->mode);
 }
 
 =method filetype
@@ -287,7 +287,7 @@ Returns just the filetype of the C<mode> stat field.
 =cut
 
 sub filetype {
-    return Fcntl::S_IFMT($_[0]->mode);
+  return Fcntl::S_IFMT($_[0]->mode);
 }
 
 =method is_file
@@ -300,7 +300,7 @@ camelCase names C<isFile> and C<isRegular>.
 =cut
 
 sub is_file {
-    return S_ISREG($_[0]->mode);
+  return S_ISREG($_[0]->mode);
 }
 
 *is_regular = \&is_file;
@@ -313,7 +313,7 @@ name C<isDir>.
 =cut
 
 sub is_dir {
-    return S_ISDIR($_[0]->mode);
+  return S_ISDIR($_[0]->mode);
 }
 
 =method is_link
@@ -326,7 +326,7 @@ Note: Only relevant when C<lstat> was used!
 =cut
 
 sub is_link {
-    return S_ISLNK($_[0]->mode);
+  return S_ISLNK($_[0]->mode);
 }
 
 =method is_block
@@ -337,7 +337,7 @@ camelCase name C<isBlock>.
 =cut
 
 sub is_block {
-    return S_ISBLK($_[0]->mode);
+  return S_ISBLK($_[0]->mode);
 }
 
 =method is_char
@@ -348,7 +348,7 @@ the camelCase name C<isChar>.
 =cut
 
 sub is_char {
-    return S_ISCHR($_[0]->mode);
+  return S_ISCHR($_[0]->mode);
 }
 
 =method is_fifo
@@ -361,7 +361,7 @@ Also available under the camelCase names C<isFIFO> and C<isPipe>.
 =cut
 
 sub is_fifo {
-    return S_ISFIFO($_[0]->mode);
+  return S_ISFIFO($_[0]->mode);
 }
 
 *is_pipe = \&is_fifo;
@@ -374,19 +374,19 @@ name C<isSocket>.
 =cut
 
 sub is_socket {
-    return S_ISSOCK($_[0]->mode);
+  return S_ISSOCK($_[0]->mode);
 }
 
 # camelCase names, kept for backward compatibility
-*isFile    = \&is_file;
+*isFile = \&is_file;
 *isRegular = \&is_file;
-*isDir     = \&is_dir;
-*isLink    = \&is_link;
-*isBlock   = \&is_block;
-*isChar    = \&is_char;
-*isFIFO    = \&is_fifo;
-*isPipe    = \&is_fifo;
-*isSocket  = \&is_socket;
+*isDir = \&is_dir;
+*isLink = \&is_link;
+*isBlock = \&is_block;
+*isChar = \&is_char;
+*isFIFO = \&is_fifo;
+*isPipe = \&is_fifo;
+*isSocket = \&is_socket;
 
 =for Pod::Coverage isFile isRegular isDir isLink isBlock isChar isFIFO isPipe isSocket
 
@@ -436,65 +436,65 @@ will cause a run-time error.
 =cut
 
 my %op = (
-    # Use the named version of these tests
-    f => sub { $_[0]->is_regular },
-    d => sub { $_[0]->is_dir },
-    l => sub { $_[0]->is_link },
-    p => sub { $_[0]->is_fifo },
-    S => sub { $_[0]->is_socket },
-    b => sub { $_[0]->is_block },
-    c => sub { $_[0]->is_char },
+  # Use the named version of these tests
+  f => sub { $_[0]->is_regular },
+  d => sub { $_[0]->is_dir },
+  l => sub { $_[0]->is_link },
+  p => sub { $_[0]->is_fifo },
+  S => sub { $_[0]->is_socket },
+  b => sub { $_[0]->is_block },
+  c => sub { $_[0]->is_char },
 
-    # Defer implementation of rest to File::stat
-    r => sub { -r $_[0][0] },
-    w => sub { -w $_[0][0] },
-    x => sub { -x $_[0][0] },
-    o => sub { -o $_[0][0] },
+  # Defer implementation of rest to File::stat
+  r => sub { -r $_[0][0] },
+  w => sub { -w $_[0][0] },
+  x => sub { -x $_[0][0] },
+  o => sub { -o $_[0][0] },
 
-    R => sub { -R $_[0][0] },
-    W => sub { -W $_[0][0] },
-    X => sub { -X $_[0][0] },
-    O => sub { -O $_[0][0] },
+  R => sub { -R $_[0][0] },
+  W => sub { -W $_[0][0] },
+  X => sub { -X $_[0][0] },
+  O => sub { -O $_[0][0] },
 
-    e => sub { -e $_[0][0] },
-    z => sub { -z $_[0][0] },
-    s => sub { -s $_[0][0] },
+  e => sub { -e $_[0][0] },
+  z => sub { -z $_[0][0] },
+  s => sub { -s $_[0][0] },
 
-    u => sub { -u $_[0][0] },
-    g => sub { -g $_[0][0] },
-    k => sub { -k $_[0][0] },
+  u => sub { -u $_[0][0] },
+  g => sub { -g $_[0][0] },
+  k => sub { -k $_[0][0] },
 
-    M => sub { -M $_[0][0] },
-    C => sub { -C $_[0][0] },
-    A => sub { -A $_[0][0] },
+  M => sub { -M $_[0][0] },
+  C => sub { -C $_[0][0] },
+  A => sub { -A $_[0][0] },
 
-    # Implement these operators by testing the underlying file, caching the result
-    t => sub { defined $_[0][2] ? $_[0][2] : $_[0][2] = (-t $_[0]->file) || 0 }, ## no critic (InputOutput::ProhibitInteractiveTest)
-    T => sub { defined $_[0][3] ? $_[0][3] : $_[0][3] = (-T $_[0]->file) || 0 },
-    B => sub { defined $_[0][4] ? $_[0][4] : $_[0][4] = (-B $_[0]->file) || 0 },
+  # Implement these operators by testing the underlying file, caching the result
+  t => sub { defined $_[0][2] ? $_[0][2] : $_[0][2] = (-t $_[0]->file) || 0 }, ## no critic (InputOutput::ProhibitInteractiveTest)
+  T => sub { defined $_[0][3] ? $_[0][3] : $_[0][3] = (-T $_[0]->file) || 0 },
+  B => sub { defined $_[0][4] ? $_[0][4] : $_[0][4] = (-B $_[0]->file) || 0 },
 );
 
 sub _filetest {
-    my ($s, $op) = @_;
-    if ($op{$op}) {
-        return $op{$op}->($s);
-    } else {
-        # We should have everything covered so this is just a safegauard
-        Carp::croak "-$op is not implemented on a File::stat::Extra object";
-    }
+  my ($s, $op) = @_;
+  if ($op{$op}) {
+    return $op{$op}->($s);
+  } else {
+    # We should have everything covered so this is just a safegauard
+    Carp::croak "-$op is not implemented on a File::stat::Extra object";
+  }
 }
 
 sub _dev_ino {
-    return $_[0]->dev . "." . $_[0]->ino;
+  return $_[0]->dev . "." . $_[0]->ino;
 }
 
 sub _compare {
-    my $va = shift;
-    my $vb = shift;
-    my $swapped = shift;
-    ($vb, $va) = ($va, $vb) if $swapped;
+  my $va = shift;
+  my $vb = shift;
+  my $swapped = shift;
+  ($vb, $va) = ($va, $vb) if $swapped;
 
-    return "$va" cmp "$vb"; # Force stringification when comparing
+  return "$va" cmp "$vb"; # Force stringification when comparing
 }
 
 use overload
